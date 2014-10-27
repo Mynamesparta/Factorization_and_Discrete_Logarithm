@@ -11,8 +11,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Factorization_and_Discrete_Logarithm
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
-        factorization_and_discrete_logarithm.cpp
+        widget.cpp \
+    algorithm.cpp \
+    LongNumber/longint.cpp \
+    LongNumber/longdouble.cpp\
+    factorization_and_discrete_logarithm.cpp \
+    listofalgorithm.cpp
 
-HEADERS  += factorization_and_discrete_logarithm.h
+HEADERS  += widget.h \
+    algorithm.h \
+    factorization_and_discrete_logarithm.h \
+    listofalgorithm.h
+    #LongNumber/longint.h \
+    #LongNumber/longdouble.h

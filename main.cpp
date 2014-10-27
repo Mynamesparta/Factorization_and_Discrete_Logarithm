@@ -9,3 +9,8 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+
+void QObject::TimeEvent(QTimerEvent *)
+{
+
+}

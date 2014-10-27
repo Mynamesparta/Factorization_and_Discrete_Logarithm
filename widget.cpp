@@ -1,10 +1,10 @@
 #include "widget.h"
 
 Widget::Widget(QWidget *parent)
-    : QWidget(parent),qre("[^0-9]"),algorithm()
+    : QWidget(parent),qre("[^0-9]")
 {
     qmb.setFixedWidth(0);
-    QStringList stringlist=algorithm.getListofAlgorithm().split(" ");
+    QStringList stringlist;//=algorithm.getListofAlgorithm().split(" ");
     qcbListOfAlgorithm=new QComboBox();
     qcbListOfAlgorithm->addItems(stringlist);
     qblToptoBotton=new QBoxLayout(QBoxLayout::TopToBottom);
@@ -39,7 +39,7 @@ void Widget::slot_FindtheValue()
 {
     this->hide();
     qmb.information(this,qcbListOfAlgorithm->currentText(),
-                             algorithm.run(qlefirstnumber->text(),qlesecondnumber->text()));
+                             (qlefirstnumber->text(),qlesecondnumber->text()));
     this->show();
 }
 
@@ -55,12 +55,12 @@ void Widget::slot_TextEdit(QString text)
 
 void Widget::slot_ChoseAlgorithm(const QString & name)
 {
-    if(algorithm.set(name)==1)
+    //if(algorithm.set(name)==1)
     {
         qlesecondnumber->hide();
         qlesecondnumber->clear();
     }
-    else
+    //else
     {
         qlesecondnumber->show();
     }
