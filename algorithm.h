@@ -22,8 +22,8 @@ class LongInt
 {
 protected:
     static LongInt mod(LongInt,LongInt);
-    static const int _baza_for_initializatio=2;
-    static const int _baza=100;
+    static const int _baza_for_initializatio=1;
+    static const int _baza=10;
 public:
     LongInt();
     LongInt(QString);
@@ -125,9 +125,9 @@ public:
      static LongInt* Inverse_Number_Toom(LongInt,LongInt =0 );
      static LongInt* Toom(LongInt , LongInt );
 
-     static bool Lehmer(LongInt, int r);
-     static bool Miller_Rabin(LongInt, int);
-     static bool Solovay_Strassen(LongInt, int);
+     static bool Lehmer(LongInt, int =1);
+     static bool Miller_Rabin(LongInt, int=1);
+     static bool Solovay_Strassen(LongInt, int=1);
      static bool Agrawal_Kayal_Saxena(LongInt);
 
      static LongInt  HelloWorldofTest(LongInt, LongInt );

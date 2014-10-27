@@ -13,6 +13,7 @@ public:
 
     //========================================
     static QVector<LongInt> Fermat(LongInt);
+    static QVector<LongInt> World_of_Test(LongInt);
 };
 
 #endif // FACTORIZATION_AND_DISCRETE_LOGARITHM_H

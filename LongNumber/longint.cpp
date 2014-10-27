@@ -48,6 +48,7 @@ LongInt::LongInt(int num):minus(0)
         number.push_front(num);
     }
 }
+
 //=====================================static======================
 void LongInt::setBaza(int new_baza)
 {
@@ -191,7 +192,7 @@ LongInt LongInt::Sqrt_n(LongInt a,LongInt k)
 void LongInt::clear()
 {
     number.clear();
-    minus=0;
+    //minus=0;
 }
 
 void LongInt::normalization()
@@ -201,10 +202,12 @@ void LongInt::normalization()
     iter--;
     for(;iter>=number.begin();iter--)
     {
-        //qDebug()<<(*iter);
         (*iter)+=k;
-        //qDebug()<<(*iter);
         k=(*iter)/_baza;
+        if((*iter)<0)
+        {
+            k--;
+        }
         (*iter)-=k*_baza;
     }
     if(k)
@@ -391,147 +394,40 @@ LongInt LongInt::operator +(LongInt b)//a=this;
     {
         return *this;
     }
-    bool double_minus=0;
-    if(minus*b.minus)
+    LongInt a,c;
+    int sign=(this->minus*!b.minus+!this->minus*b.minus)?-1:1;
+    if(*this<b)//
     {
-        //qDebug()<<"list_algorithm:(a<0)+(b<0)";
-        minus=0;
-        b.minus=0;
-        double_minus=1;
-    }
-    LongInt c;
-    int sum;
-    int k=0;
-    QVector<int>::iterator iter_a=  number.end(),
-                           iter_b=b.number.end();
-    iter_a--;
-    iter_b--;
-    for(;iter_a >= number.begin()&&iter_b>=b.number.begin();iter_a--,iter_b--)
-    {
-        sum=(minus?(-*iter_a):(*iter_a)) + (b.minus?(-*iter_b):(*iter_b))+k;
-        //qDebug()<<"list_algorithm:old sum="<<sum<<" iter_a="<<*iter_a<<" iter_b="<<*iter_b;
-        if(sum>=_baza)
+        if(b.minus)//a-b <0
         {
-            k=1;
+            c.minus=1;
         }
-        else
-        {
-            if(sum<0)
-            {
-                k=-1;
-            }
-            else
-            {
-                k=0;
-            }
-        }
-        sum-=_baza*k;
-        //qDebug()<<"list_algorithm:new sum="<<sum<<" k="<<k;
-        c.number.push_front(sum);
-    }
-    if(number.length()!=b.number.length())
-    {
-        if(number.length()>b.number.length())
-        {
-            for(;iter_a>=number.begin();iter_a--)
-            {
-                if(!k)
-                {
-                    c.number.push_front(*iter_a);
-                }
-                else
-                {
-                    sum=*iter_a+k;
-                    if(sum>=_baza)
-                    {
-                        k=1;
-                    }
-                    else
-                    {
-                        if(sum<0)
-                        {
-                            k=-1;
-                        }
-                        else
-                        {
-                            k=0;
-                        }
-                    }
-                    sum-=_baza*k;
-                    c.number.push_front(sum);
-                    if(k&&iter_a==number.begin())
-                    {
-                        c.number.push_front(1);
-                        c.minus= k==-1;
-                    }
-                }
-            }
-        }
-        else
-        {
-            for(;iter_b>=b.number.begin();iter_b--)
-            {
-                if(!k)
-                {
-                    c.number.push_front(*iter_b);
-                }
-                else
-                {
-                    sum=*iter_b+k;
-                    if(sum>=_baza)
-                    {
-                        k=1;
-                    }
-                    else
-                    {
-                        if(sum<0)
-                        {
-                            k=-1;
-                        }
-                        else
-                        {
-                            k=0;
-                        }
-                    }
-                    sum-=_baza*k;
-                    c.number.push_front(sum);
-                    if(k&&iter_b==b.number.begin())
-                    {
-                        c.number.push_front(1);
-                        c.minus= k==-1;
-                    }
-                }
-            }
-        }
+        c=b;
+        b=*this;
+        a=c;
+        c.clear();
     }
     else
     {
-        if(k)
+        if(this->minus)//b-a <0
         {
-            c.number.push_front(1);
-            c.minus= (k==-1);
+            c.minus=1;
         }
+        a=*this;
     }
-    iter_a=c.number.begin();
-    for(;iter_a<c.number.end();iter_a++)
+    //qDebug()<<a<<b;
+    while(!b.isEmpty())
     {
-        if(*iter_a==0)
-        {
-            c.number.removeFirst();
-            iter_a--;
-        }
-        else break;
+        c.push_front(a.number.takeLast()+sign*b.number.takeLast());
+        //qDebug()<<c;
     }
-    if(c.number.isEmpty())
+    //qDebug()<<c;
+    while(!a.isEmpty())
     {
-        c.number.push_front(0);
+        c.push_front(a.number.takeLast());
     }
-    if(double_minus)
-    {
-        minus=1;
-        b.minus=1;
-        c.minus=1;
-    }
+    //qDebug()<<c;
+    c.normalization();
     return c;
 }
 LongInt LongInt::operator +(int b)
@@ -551,7 +447,6 @@ LongInt LongInt::operator -(LongInt b)
 {
     b.minus=!b.minus;
     LongInt c=*this + b;
-    b.minus=!b.minus;
     return c;
 }
 
@@ -562,6 +457,7 @@ LongInt LongInt::operator -(int b)
         LongInt c=*this;
         int num=c.number.takeLast()-b;
         c.number.push_back(num);
+        c.normalization();
         return c;
     }
     else
@@ -1036,6 +932,7 @@ QDebug /*LongInt::*/operator<<(QDebug qd, LongInt a)
 {
     QVector<int>::iterator iter=a.number.begin();
     QString text="( ";
+    text+=(a.minus?"- ":" ");
     for(;iter<a.number.end();iter++)
     {
         text+=QString::number(*iter)+" ";

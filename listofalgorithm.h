@@ -11,7 +11,6 @@
 #include "Algorithm/discrete_logarithm.h"
 #include "Algorithm/factorization.h"
 
-class Algorithm;
 class Factorization;
 class DiscreteLogarithm;
 
