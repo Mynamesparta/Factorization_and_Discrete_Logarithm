@@ -12,16 +12,16 @@
 #include <QDebug>
 #include <QRegExp>
 #include <QMessageBox>
-//#include "list_algorithm.h"
+#include "listofalgorithm.h"
 
-//class ListofAlgorithm;
+class ListofAlgorithm;
 
 class Widget : public QWidget
 {
     Q_OBJECT
 private:
     QRegExp qre;
-    //ListofAlgorithm algorithm;
+    ListofAlgorithm algorithm;
     QMessageBox qmb;
     QBoxLayout* qblToptoBotton;
     QBoxLayout* qblLefttoRight;

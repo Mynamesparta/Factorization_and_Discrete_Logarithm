@@ -4,7 +4,7 @@ Widget::Widget(QWidget *parent)
     : QWidget(parent),qre("[^0-9]")
 {
     qmb.setFixedWidth(0);
-    QStringList stringlist;//=algorithm.getListofAlgorithm().split(" ");
+    QStringList stringlist=algorithm.getListofAlgorithm().split(" ");
     qcbListOfAlgorithm=new QComboBox();
     qcbListOfAlgorithm->addItems(stringlist);
     qblToptoBotton=new QBoxLayout(QBoxLayout::TopToBottom);
@@ -29,17 +29,20 @@ Widget::Widget(QWidget *parent)
             this,SLOT(slot_FindtheValue()));
     connect(qcbListOfAlgorithm,SIGNAL(activated(QString)),
             this,SLOT(slot_ChoseAlgorithm(QString)));
+    //=====================================================
+    slot_ChoseAlgorithm("Fermat");
 }
 
 Widget::~Widget()
 {
+
 }
 
 void Widget::slot_FindtheValue()
 {
     this->hide();
     qmb.information(this,qcbListOfAlgorithm->currentText(),
-                             (qlefirstnumber->text(),qlesecondnumber->text()));
+                             algorithm.run(qlefirstnumber->text()));
     this->show();
 }
 
@@ -55,12 +58,12 @@ void Widget::slot_TextEdit(QString text)
 
 void Widget::slot_ChoseAlgorithm(const QString & name)
 {
-    //if(algorithm.set(name)==1)
+    if(algorithm.set(name)==1)
     {
         qlesecondnumber->hide();
         qlesecondnumber->clear();
     }
-    //else
+    else
     {
         qlesecondnumber->show();
     }

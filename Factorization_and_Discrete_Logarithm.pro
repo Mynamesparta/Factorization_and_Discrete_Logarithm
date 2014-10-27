@@ -16,12 +16,14 @@ SOURCES += main.cpp\
     algorithm.cpp \
     LongNumber/longint.cpp \
     LongNumber/longdouble.cpp\
-    factorization_and_discrete_logarithm.cpp \
-    listofalgorithm.cpp
+    listofalgorithm.cpp \
+    Algorithm/factorization.cpp \
+    Algorithm/discrete_logarithm.cpp
 
 HEADERS  += widget.h \
     algorithm.h \
-    factorization_and_discrete_logarithm.h \
-    listofalgorithm.h
+    listofalgorithm.h \
+    Algorithm/factorization.h \
+    Algorithm/discrete_logarithm.h
     #LongNumber/longint.h \
     #LongNumber/longdouble.h
