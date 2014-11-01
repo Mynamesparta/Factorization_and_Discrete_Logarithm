@@ -722,15 +722,15 @@ bool Algorithm::Agrawal_Kayal_Saxena(LongInt a)
     LongInt log_2_a=0;
     LongInt _a=a;
     LongInt r(2),k;
-    while(_a>=2)
+    while( _a >=2)
     {
         _a/=2;
         log_2_a += 1;
     }
+    //+++++++++++++++1+++++++++++++++
     LongInt a_=a,midle;
     _a=1;
-    //+++++++++++++++1+++++++++++++++
-    for(k=2;k<=log_2_a;k+=1)
+    for(k=2;k <= log_2_a;k+=1)
     {
         _a=0;
         a_=a-1;
@@ -748,6 +748,7 @@ bool Algorithm::Agrawal_Kayal_Saxena(LongInt a)
             if((a_-_a)<=1) break;
         }
     }
+    //
     //+++++++++++++++2+++++++++++++++
     LongInt sqr_log_2=log_2_a*log_2_a;
     //LongInt maxr=log_2_a^5;
@@ -760,16 +761,17 @@ bool Algorithm::Agrawal_Kayal_Saxena(LongInt a)
         for(k=1;(!nextR)&&k<=sqr_log_2;k+=1)
         {
             _a=((_a*a) % r);
-            //qDebug()<<k<<_a;
+            //qDebug()<<"algorithm.cpp:Agrawal_Kayal_Saxena"<<k<<_a;
             nextR=(_a==1||_a==0);
         }
     }
     r-=1;
     //qDebug()<<"r="<<r;
     //+++++++++++++++3+++++++++++++++
-    for(_a=r;_a>1;_a-=1)
+    for(_a=r;_a>LongInt(1);_a-=1)
     {
         k=HCD(_a,a);
+        //qDebug()<<_a;
         if(k==a)
         {
             break;
@@ -784,6 +786,7 @@ bool Algorithm::Agrawal_Kayal_Saxena(LongInt a)
     {
         return true;
     }
+    //
     //+++++++++++++++5+++++++++++++++
     k=2;
     r=LongInt::Sqrt(Eulers_totient(r))*log_2_a;
@@ -792,7 +795,7 @@ bool Algorithm::Agrawal_Kayal_Saxena(LongInt a)
     {
         if(Modular_exponentiation(k,a,a)!=k)
         {
-            qDebug()<<"Modular_exponentiation("<<k<<","<<a<<","<<a<<")=\n"<<Modular_exponentiation(k,a,a);
+            //qDebug()<<"Modular_exponentiation("<<k<<","<<a<<","<<a<<")=\n"<<Modular_exponentiation(k,a,a);
             return false;
         }
 
@@ -807,10 +810,12 @@ LongInt Algorithm::HCD(LongInt a,LongInt b)
     LongInt t;
     while(b!=0)
     {
+        //qDebug()<<"algorithm.cpp:HCD (a,b):"<<a<<b;
         t=b;
         b=a%b;
         a=t;
     }
+    //qDebug()<<"algorithm.cpp:HCD (a,b) _end"<<a<<b;
     return a;
 }
 

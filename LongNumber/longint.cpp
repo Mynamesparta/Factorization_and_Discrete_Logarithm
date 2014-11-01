@@ -97,7 +97,8 @@ int LongInt::baza()
 }
 LongInt LongInt::mod(LongInt a,LongInt b)
 {
-    if(b==0)
+    a.minus=b.minus=0;
+    if(b.isEmpty()&&b==0)
     {
         qDebug()<<"longint.cpp:Error "<<"\n"
                 <<a<<"\0 = BAMMMMMMMMMMMM!!!!";
@@ -105,6 +106,7 @@ LongInt LongInt::mod(LongInt a,LongInt b)
     }
     if(a < b)
     {
+        //qDebug()<<a<<"<"<<b;
         return a;
     }
     int k;
@@ -125,11 +127,13 @@ LongInt LongInt::mod(LongInt a,LongInt b)
             continue;
         }
         k=0;
-        while(part>=b)
+        while(part >= b)
         {
+            //qDebug()<<part<<">="<<b;
             k++;
             part-=b;
         }
+        //qDebug()<<part;
         result_long_int.push_back(k);
         //qDebug()<<"longint.cpp:result_long_int="<<result_long_int;
     }
@@ -192,26 +196,46 @@ LongInt LongInt::Sqrt_n(LongInt a,LongInt k)
 void LongInt::clear()
 {
     number.clear();
-    //minus=0;
+    minus=0;
 }
 
 void LongInt::normalization()
 {
+    while(number.length()>0)
+    {
+        if(number.first()==0)
+        {
+            number.removeFirst();
+        }
+        else
+        {
+            break;
+        }
+    }
     int k=0;
     QVector<int>::iterator iter=number.end();
     iter--;
+    //qDebug()<<"*this="<<*this;
     for(;iter>=number.begin();iter--)
     {
         (*iter)+=k;
         k=(*iter)/_baza;
+        (*iter)-=k*_baza;
         if((*iter)<0)
         {
             k--;
+            (*iter)+=_baza;
         }
-        (*iter)-=k*_baza;
     }
     if(k)
     {
+        //qDebug()<<*this;
+        //qDebug()<<k;
+        if(k<0)
+        {
+            minus=1;
+            k=-k;
+        }
         int _k;
         while(k>=_baza)
         {
@@ -224,7 +248,7 @@ void LongInt::normalization()
             number.push_front(k);
         }
     }
-    while(number.length()>1)
+    while(number.length()>0)
     {
         if(number.first()==0)
         {
@@ -396,12 +420,8 @@ LongInt LongInt::operator +(LongInt b)//a=this;
     }
     LongInt a,c;
     int sign=(this->minus*!b.minus+!this->minus*b.minus)?-1:1;
-    if(*this<b)//
+    if((+*this)<(+b))//
     {
-        if(b.minus)//a-b <0
-        {
-            c.minus=1;
-        }
         c=b;
         b=*this;
         a=c;
@@ -409,12 +429,9 @@ LongInt LongInt::operator +(LongInt b)//a=this;
     }
     else
     {
-        if(this->minus)//b-a <0
-        {
-            c.minus=1;
-        }
         a=*this;
     }
+    c.minus=a.minus;
     //qDebug()<<a<<b;
     while(!b.isEmpty())
     {
@@ -426,8 +443,9 @@ LongInt LongInt::operator +(LongInt b)//a=this;
     {
         c.push_front(a.number.takeLast());
     }
-    //qDebug()<<c;
+    //qDebug()<<"longint.cpp:operator + c"<<c;
     c.normalization();
+    //qDebug()<<c;
     return c;
 }
 LongInt LongInt::operator +(int b)
@@ -440,6 +458,13 @@ LongInt LongInt::operator +(int b)
     c.number.push_back(c.number.takeLast()+b);
     c.normalization();
     return c;
+}
+
+LongInt  LongInt::operator +()// return |*this|
+{
+    LongInt b=*this;
+    b.minus=0;
+    return b;
 }
 
 //=============================operator=(-)======================================
@@ -464,6 +489,26 @@ LongInt LongInt::operator -(int b)
     {
         return *this-LongInt(b);
     }
+}
+
+LongInt  LongInt::operator -()
+{
+    LongInt b=*this;
+    b.minus=!b.minus;
+    return b;
+}
+
+//=============================operator=(++/--)======================================
+LongInt& LongInt::operator ++()
+{
+    *this +=1;
+    return *this;
+}
+
+LongInt& LongInt::operator --()
+{
+    *this -=1;
+    return *this;
 }
 //=============================operator=(=)======================================
 LongInt& LongInt::operator =(const LongInt b)
@@ -523,6 +568,16 @@ LongInt& LongInt::operator -=(const int b)
 //=============================operator=(<)======================================
 bool  LongInt::operator <(LongInt b)
 {
+    //----------------------------------------
+    if(b!=0    &&   (!this->minus)*b.minus)
+    {
+        return false;
+    }
+    if(*this!=0&&   this->minus*(!b.minus))
+    {
+        return true;
+    }
+    //----------------------------------------
     if(!this->length())
     {
         this->push_back(0);
@@ -532,17 +587,31 @@ bool  LongInt::operator <(LongInt b)
         b.push_back(0);
     }
 
-    if(length()<b.length())
+    LongInt a;
+    //--------------------
+    if(this->minus*b.minus)
+    {
+        LongInt c=b;
+        b=*this;
+        a=c;
+    }
+    else
+    {
+        a=*this;
+    }
+    //--------------------
+    if(a.length()<b.length())
     {
         return 1;
     }
-    if(length()>b.length())
+    if(a.length()>b.length())
     {
         return 0;
     }
-    QVector<int>::iterator iter_for_a=number.begin();
+    //--------------------
+    QVector<int>::iterator iter_for_a=a.number.begin();
     QVector<int>::iterator iter_for_b=b.number.begin();
-    for(;iter_for_a<number.end();iter_for_a++,iter_for_b++)
+    for(;iter_for_a<a.number.end();iter_for_a++,iter_for_b++)
     {
         if((*iter_for_a)<(*iter_for_b))
         {
@@ -590,6 +659,16 @@ bool  LongInt::operator <(int b)
 //=============================operator=(>)======================================
 bool  LongInt::operator >(LongInt b)
 {
+    //----------------------------------------
+    if(b!=0    &&   (!this->minus)*b.minus)
+    {
+        return true;
+    }
+    if(*this!=0&&   this->minus*(!b.minus))
+    {
+        return false;
+    }
+    //----------------------------------------
     if(!this->length())
     {
         this->push_back(0);
@@ -599,17 +678,30 @@ bool  LongInt::operator >(LongInt b)
         b.push_back(0);
     }
 
-    if(length()>b.length())
+    LongInt a;
+    //--------------------
+    if(this->minus*b.minus)
+    {
+        LongInt c=b;
+        b=*this;
+        a=c;
+    }
+    else
+    {
+        a=*this;
+    }
+    //--------------------
+    if(a.length()>b.length())
     {
         return 1;
     }
-    if(length()<b.length())
+    if(a.length()<b.length())
     {
         return 0;
     }
-    QVector<int>::iterator iter_for_a=number.begin();
+    QVector<int>::iterator iter_for_a=a.number.begin();
     QVector<int>::iterator iter_for_b=b.number.begin();
-    for(;iter_for_a<number.end();iter_for_a++,iter_for_b++)
+    for(;iter_for_a<a.number.end();iter_for_a++,iter_for_b++)
     {
         if((*iter_for_a)>(*iter_for_b))
         {
@@ -657,6 +749,16 @@ bool  LongInt::operator >(int b)
 //=============================operator=(==)======================================
 bool  LongInt::operator ==(LongInt b)
 {
+    //----------------------------------------
+    if(b!=0    &&   (!this->minus)*b.minus)
+    {
+        return false;
+    }
+    if(*this!=0&&   this->minus*(!b.minus))
+    {
+        return false;
+    }
+    //----------------------------------------
     if(!this->length())
     {
         this->push_back(0);
@@ -665,15 +767,18 @@ bool  LongInt::operator ==(LongInt b)
     {
         b.push_back(0);
     }
-    if( (length()<b.length()) || (length()>b.length()) )
+
+    LongInt a=*this;
+    //--------------------
+    if( (a.length()<b.length()) || (a.length()>b.length()) )
     {
         return 0;
     }
 
-    QVector<int>::iterator iter_for_a=number.begin();
+    QVector<int>::iterator iter_for_a=a.number.begin();
     QVector<int>::iterator iter_for_b=b.number.begin();
     int i=-1;
-    for(;iter_for_a<number.end();iter_for_a++,iter_for_b++)
+    for(;iter_for_a<a.number.end();iter_for_a++,iter_for_b++)
     {
         i++;
         if( ((*iter_for_a)<(*iter_for_b)) || ((*iter_for_a)>(*iter_for_b)) )
@@ -717,6 +822,16 @@ bool  LongInt::operator ==(int b)
 //=============================operator=(!=)======================================
 bool  LongInt::operator !=(LongInt b)
 {
+    //----------------------------------------
+    if(b!=0    &&   (!this->minus)*b.minus)
+    {
+        return true;
+    }
+    if(*this!=0&&   this->minus*(!b.minus))
+    {
+        return true;
+    }
+    //----------------------------------------
     if(!this->length())
     {
         this->push_back(0);
@@ -726,14 +841,17 @@ bool  LongInt::operator !=(LongInt b)
         b.push_back(0);
     }
 
-    if( (length()<b.length()) || (length()>b.length()) )
+    LongInt a=*this;
+    //--------------------
+
+    if( (a.length()<b.length()) || (a.length()>b.length()) )
     {
         return 1;
     }
 
-    QVector<int>::iterator iter_for_a=number.begin();
+    QVector<int>::iterator iter_for_a=a.number.begin();
     QVector<int>::iterator iter_for_b=b.number.begin();
-    for(;iter_for_a<number.end();iter_for_a++,iter_for_b++)
+    for(;iter_for_a<a.number.end();iter_for_a++,iter_for_b++)
     {
         if( ((*iter_for_a)<(*iter_for_b)) || ((*iter_for_a)>(*iter_for_b)))
         {
@@ -777,6 +895,16 @@ bool  LongInt::operator !=(int b)
 //=============================operator=(>=)======================================
 bool  LongInt::operator >=(LongInt b)
 {
+    //----------------------------------------
+    if(b!=0    &&   (!this->minus)*b.minus)
+    {
+        return true;
+    }
+    if(*this!=0&&   this->minus*(!b.minus))
+    {
+        return false;
+    }
+    //----------------------------------------
     if(!this->length())
     {
         this->push_back(0);
@@ -786,17 +914,31 @@ bool  LongInt::operator >=(LongInt b)
         b.push_back(0);
     }
 
-    if(length()>b.length())
+    LongInt a;
+    //--------------------
+    if(this->minus*b.minus)
+    {
+        LongInt c=b;
+        b=*this;
+        a=c;
+    }
+    else
+    {
+        a=*this;
+    }
+    //--------------------
+
+    if(a.length()>b.length())
     {
         return 1;
     }
-    if(length()<b.length())
+    if(a.length()<b.length())
     {
         return 0;
     }
-    QVector<int>::iterator iter_for_a=number.begin();
+    QVector<int>::iterator iter_for_a=a.number.begin();
     QVector<int>::iterator iter_for_b=b.number.begin();
-    for(;iter_for_a<number.end();iter_for_a++,iter_for_b++)
+    for(;iter_for_a<a.number.end();iter_for_a++,iter_for_b++)
     {
         if((*iter_for_a)>(*iter_for_b))
         {
@@ -844,6 +986,16 @@ bool  LongInt::operator >=(int b)
 //=============================operator=(<=)======================================
 bool  LongInt::operator <=(LongInt b)
 {
+    //----------------------------------------
+    if(b!=0    &&   (!this->minus)*b.minus)
+    {
+        return false;
+    }
+    if(*this!=0&&   this->minus*(!b.minus))
+    {
+        return true;
+    }
+    //----------------------------------------
     if(!this->length())
     {
         this->push_back(0);
@@ -853,6 +1005,20 @@ bool  LongInt::operator <=(LongInt b)
         b.push_back(0);
     }
 
+    LongInt a;
+    //--------------------
+    if(this->minus*b.minus)
+    {
+        LongInt c=b;
+        b=*this;
+        a=c;
+    }
+    else
+    {
+        a=*this;
+    }
+    //--------------------
+
     if(length()<b.length())
     {
         return 1;
@@ -861,9 +1027,9 @@ bool  LongInt::operator <=(LongInt b)
     {
         return 0;
     }
-    QVector<int>::iterator iter_for_a=number.begin();
+    QVector<int>::iterator iter_for_a=a.number.begin();
     QVector<int>::iterator iter_for_b=b.number.begin();
-    for(;iter_for_a<number.end();iter_for_a++,iter_for_b++)
+    for(;iter_for_a<a.number.end();iter_for_a++,iter_for_b++)
     {
         if((*iter_for_a)<(*iter_for_b))
         {

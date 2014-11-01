@@ -52,8 +52,12 @@ public:
     //+++++++++++++++++++++++++++++operator+++++++++++++++++++++++++++++++++++++++
     LongInt  operator +(LongInt );
     LongInt  operator +(int );
+    LongInt  operator +();
     LongInt  operator -(LongInt );
     LongInt  operator -(int );
+    LongInt  operator -();
+    LongInt& operator --();
+    LongInt& operator ++();
     LongInt& operator =(const LongInt );
     LongInt& operator =(const int );
     LongInt& operator +=(const LongInt );
