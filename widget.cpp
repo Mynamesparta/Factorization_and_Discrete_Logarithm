@@ -10,8 +10,12 @@ Widget::Widget(QWidget *parent)
     qblToptoBotton=new QBoxLayout(QBoxLayout::TopToBottom);
     qblLefttoRight=new QBoxLayout(QBoxLayout::LeftToRight);
     qblToptoBotton->addWidget(qcbListOfAlgorithm);
+    qblToptoBotton->addWidget(qlfirstnumber);
     qblToptoBotton->addWidget(qlefirstnumber);
+    qblToptoBotton->addWidget(qlsecondnumber);
     qblToptoBotton->addWidget(qlesecondnumber);
+    qblToptoBotton->addWidget(qlthirdnumber);
+    qblToptoBotton->addWidget(qlethirdnumber);
     //-----
     qblLefttoRight->addStretch(2);
     qblLefttoRight->addWidget(qpbFindtheValue,1);
@@ -35,14 +39,25 @@ Widget::Widget(QWidget *parent)
 
 Widget::~Widget()
 {
-
+    /*/
+    delete  qlefirstnumber;
+    delete  qlesecondnumber;
+    delete  qlethirdnumber;
+    delete  qlfirstnumber;
+    delete  qlsecondnumber;
+    delete  qlthirdnumber;
+    /*/
 }
 
 void Widget::slot_FindtheValue()
 {
     this->hide();
-    qmb.information(this,qcbListOfAlgorithm->currentText(),
-                             algorithm.run(qlefirstnumber->text()));
+    if(qlfirstnumber->isHidden())
+        qmb.information(this,qcbListOfAlgorithm->currentText(),
+                             algorithm.run_factorization(qlefirstnumber->text()));
+    else
+        qmb.information(this,qcbListOfAlgorithm->currentText(),
+                             algorithm.run_discrete_logarithm(qlefirstnumber->text(),qlesecondnumber->text(),qlethirdnumber->text()));
     this->show();
 }
 
@@ -58,14 +73,32 @@ void Widget::slot_TextEdit(QString text)
 
 void Widget::slot_ChoseAlgorithm(const QString & name)
 {
-    if(algorithm.set(name)==1)
+    switch(algorithm.set(name))
     {
+    case 1:
         qlesecondnumber->hide();
         qlesecondnumber->clear();
-    }
-    else
-    {
+        qlethirdnumber->hide();
+        qlethirdnumber->clear();
+
+        qlfirstnumber->hide();
+        qlsecondnumber->hide();
+        qlthirdnumber->hide();
+        break;
+    case 2:
         qlesecondnumber->show();
+
+        qlfirstnumber->hide();
+        qlsecondnumber->hide();
+        qlthirdnumber->hide();
+        break;
+    case 3:
+        qlesecondnumber->show();
+        qlethirdnumber->show();
+        qlfirstnumber->show();
+        qlsecondnumber->show();
+        qlthirdnumber->show();
+        break;
     }
 }
 

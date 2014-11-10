@@ -49,6 +49,11 @@ LongInt::LongInt(int num):minus(0)
     }
 }
 
+LongInt::~LongInt()
+{
+
+}
+
 //=====================================static======================
 void LongInt::setBaza(int new_baza)
 {
@@ -98,11 +103,13 @@ int LongInt::baza()
 LongInt LongInt::mod(LongInt a,LongInt b)
 {
     a.minus=b.minus=0;
-    if(b.isEmpty()&&b==0)
+
+    if(b.isEmpty()||b==0)
     {
         qDebug()<<"longint.cpp:Error "<<"\n"
-                <<a<<"\0 = BAMMMMMMMMMMMM!!!!";
+                <<a<<"\\0 = BAMMMMMMMMMMMM!!!!";
         QApplication::exit();
+        return (-LongInt(0));
     }
     if(a < b)
     {
@@ -327,6 +334,15 @@ bool LongInt::isEmpty()
 int LongInt::length()
 {
     return number.length();
+}
+
+int LongInt::last()
+{
+    if(number.isEmpty())
+    {
+        return 0;
+    }
+    return number.last();
 }
 
 QString LongInt::toString()
@@ -1253,7 +1269,7 @@ LongInt  LongInt::operator /(LongInt b)//a=this;
     if(b==0)
     {
         qDebug()<<"longint.cpp:Error "<<"\n"
-                <<*this<<"\0 = BAMMMMMMMMMMMM!!!!";
+                <<*this<<"\\0 = BAMMMMMMMMMMMM!!!!";
         QApplication::exit();
     }
     if((*this) < b)
@@ -1355,6 +1371,11 @@ LongInt  LongInt::operator %(LongInt b)
     return mod(*this,b);
 }
 
+LongInt  LongInt::operator %(int b)
+{
+    return mod(*this,LongInt(b));
+}
+
 //=============================operator=(^)======================================
 
 LongInt  LongInt::operator ^(LongInt b)
@@ -1383,3 +1404,4 @@ int& LongInt::operator [](int i)
 {
     return this->number[i];
 }
+//

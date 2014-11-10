@@ -12,6 +12,11 @@ LongDouble::LongDouble(QString num):LongInt(num)
 {
 }
 
+LongDouble::~LongDouble()
+{
+
+}
+
 QString LongDouble::toString()
 {
     QString text;

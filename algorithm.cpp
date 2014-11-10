@@ -412,11 +412,44 @@ LongInt Algorithm::Schonhage(LongInt a, LongInt b)
 
 int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
 {
+    if(a>=mod)
+    {
+        a=a%mod;
+    }
+
     int t;
     int an_2=0,an_1=1;
     int invert;
 
     int b=a;
+        a=mod;
+
+    while(b!=0&&b!=1)
+    {
+        an_2= an_2 - an_1*(a/b);
+        invert=an_1;
+        an_1=an_2;
+        an_2=invert;
+        //==========algorithm=HCD(a,b)============
+        t=b;
+        b=a%b;
+        a=t;
+        //========================================
+    }
+    if(an_1<0)
+    {
+        an_1=mod-an_1;
+    }
+    return an_1;
+}
+LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a,LongInt mod)
+{
+    //
+    LongInt t;
+    LongInt an_2=0,an_1=1;
+    LongInt invert;
+
+    LongInt b=a;
         a=mod;
 
     while(b!=1)
@@ -431,6 +464,11 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
         b=a%b;
         a=t;
         //========================================
+    }
+    //
+    if(an_1<LongInt(0))
+    {
+        return mod+an_1;
     }
     return an_1;
 }
@@ -827,6 +865,7 @@ LongInt Algorithm::Modular_exponentiation(LongInt a,LongInt m, LongInt r)
 
     while(1)
     {
+        //qDebug()<<a_k<<a<<m;
         a_k=((a_k*a)%m);
         part<<a_k;
         if(part.last()==1)

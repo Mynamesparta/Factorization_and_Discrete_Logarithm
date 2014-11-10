@@ -10,7 +10,6 @@
 
 #include "complex"
 #include "math.h"
-
 struct Table;
 
 class Algorithm;
@@ -24,11 +23,13 @@ protected:
     static LongInt mod(LongInt,LongInt);
     static const int _baza_for_initializatio=1;
     static const int _baza=10;
+    static bool is_Time_to_qDebug;
 public:
     LongInt();
     LongInt(QString);
     LongInt(int);
-    
+    virtual ~LongInt();
+
     static void setBaza(int new_baza=1);
     static void setAlgorithm(QString);
     static int baza_for_initializatio();
@@ -43,6 +44,7 @@ public:
     void _normalization();
     bool isEmpty();
     int  length();
+    int last();
     void resize(int); //Null
 
     virtual QString toString();
@@ -88,6 +90,7 @@ public:
     LongInt& operator /=(LongInt);
     LongInt& operator /=(int);
     LongInt  operator %(LongInt);
+    LongInt  operator %(int);
     LongInt  operator ^(LongInt);
     LongInt  operator ^(int);
     int &operator [](int);
@@ -106,6 +109,7 @@ public:
     LongDouble();
     LongDouble(QString);
     LongDouble(int);
+    ~LongDouble();
 
     virtual QString toString();
     void setSize(int);
@@ -134,10 +138,12 @@ public:
      static bool Solovay_Strassen(LongInt, int=1);
      static bool Agrawal_Kayal_Saxena(LongInt);
 
-     static LongInt  HelloWorldofTest(LongInt, LongInt );
-     //static QVector<int> prime_numbers;
-private:
+
      static int Modular_Multiplicative_Inverse(int,int);
+     static LongInt Modular_Multiplicative_Inverse(LongInt,LongInt);
+     static LongInt  HelloWorldofTest(LongInt, LongInt );
+
+protected:
      static void FFT(QVector< std::complex<double> >&,bool);
      static LongInt HCD(LongInt,LongInt);
      static LongInt Modular_exponentiation(LongInt a,LongInt m, LongInt r);

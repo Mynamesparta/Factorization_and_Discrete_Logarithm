@@ -21,14 +21,16 @@ class ListofAlgorithm
         ListofAlgorithm();
         ~ListofAlgorithm();
 
-        QString run(QString first);
+        QString run_factorization(QString );
+        QString run_discrete_logarithm(QString, QString, QString);
         QString getListofAlgorithm();
         int set(QString);
     private:
         QVector<int>::iterator iter;
         QTime timer;
         QString name_of_current_algorithm="";
-        QVector<LongInt> (*current_algorithm)(LongInt)=NULL;
+        QVector<LongInt> (*current_algorithm_factorization)(LongInt)=NULL;
+        LongInt (*current_algorithm_logarithm)(LongInt,LongInt,LongInt)=NULL;
 };
 
 #endif // LISTOFALGORITHM_H

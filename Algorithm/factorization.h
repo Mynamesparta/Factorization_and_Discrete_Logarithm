@@ -5,7 +5,7 @@
 
 #include "algorithm.h"
 class LongInt;
-class Factorization
+class Factorization:public Algorithm
 {
 public:
     Factorization();
@@ -13,6 +13,8 @@ public:
 
     //========================================
     static QVector<LongInt> Fermat(LongInt);
+    static QVector<LongInt> Pollard(LongInt);
+    static QVector<LongInt> Lenstra(LongInt);
     static QVector<LongInt> World_of_Test(LongInt);
 };
 

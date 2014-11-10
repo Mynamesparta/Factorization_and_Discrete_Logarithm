@@ -8,6 +8,7 @@
 #include <QList>
 #include <QString>
 #include <QLineEdit>
+#include <QLabel>
 #include <QPushButton>
 #include <QDebug>
 #include <QRegExp>
@@ -26,8 +27,14 @@ private:
     QBoxLayout* qblToptoBotton;
     QBoxLayout* qblLefttoRight;
     QComboBox* qcbListOfAlgorithm;
+
+    QLabel*    qlfirstnumber=new QLabel("Генератор");
     QLineEdit* qlefirstnumber=new QLineEdit();
+    QLabel*    qlsecondnumber=new QLabel("Число");
     QLineEdit* qlesecondnumber=new QLineEdit();
+    QLabel*    qlthirdnumber=new QLabel("Порядок");
+
+    QLineEdit* qlethirdnumber=new QLineEdit();
     QPushButton* qpbFindtheValue=new QPushButton("&Знайти значення..");
 public:
     Widget(QWidget *parent = 0);
