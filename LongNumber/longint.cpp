@@ -6,6 +6,22 @@ LongInt::LongInt():minus(0)
 
 }
 
+LongInt::LongInt(const LongInt &b)
+{
+    if(this==&b)
+    {
+        return;
+    }
+    this->number=b.number;
+    this->minus=b.minus;
+}
+/*/
+LongInt::LongInt(LongInt b)
+{
+    this->number=b.number;
+    this->minus=b.minus;
+}
+/*/
 LongInt::LongInt(QString qs_number):minus(0)
 {
     if(qs_number==""||qs_number==" ")
@@ -34,19 +50,19 @@ LongInt::LongInt(QString qs_number):minus(0)
     }
 }
 
-LongInt::LongInt(int num):minus(0)
+LongInt::LongInt(int num)//:minus(0)
 {
-    int k;
-    while(num>=_baza)
-    {
-        k=num-(num/_baza)*_baza;
-        number.push_front(k);
-        num/=_baza;
-    }
-    if(num)
+    if(num>=0)
     {
         number.push_front(num);
+        minus=0;
     }
+    else
+    {
+        number.push_front(-num);
+        minus=1;
+    }
+    normalization();
 }
 
 LongInt::~LongInt()
@@ -102,18 +118,26 @@ int LongInt::baza()
 }
 LongInt LongInt::mod(LongInt a,LongInt b)
 {
-    a.minus=b.minus=0;
-
+    if(b==0&&b.minus)
+    {
+        qDebug()<<"longint.cpp:"<<a<<"% -0 = ...?";
+        return a;
+    }
     if(b.isEmpty()||b==0)
     {
         qDebug()<<"longint.cpp:Error "<<"\n"
-                <<a<<"\\0 = BAMMMMMMMMMMMM!!!!";
-        QApplication::exit();
+                <<a<<"\%0 = BAMMMMMMMMMMMM!!!!";
+        //QApplication::exit();
+        exit(0);
+        throw a;
         return (-LongInt(0));
     }
+    bool _minus=(!a.minus)*b.minus+a.minus*(!b.minus);
+    a.minus=b.minus=0;
     if(a < b)
     {
         //qDebug()<<a<<"<"<<b;
+        a.minus=_minus;
         return a;
     }
     int k;
@@ -144,6 +168,7 @@ LongInt LongInt::mod(LongInt a,LongInt b)
         result_long_int.push_back(k);
         //qDebug()<<"longint.cpp:result_long_int="<<result_long_int;
     }
+    part.minus=_minus;
     return part;
 }
 
@@ -477,7 +502,7 @@ LongInt LongInt::operator +(int b)
 }
 
 LongInt  LongInt::operator +()// return |*this|
-{
+{                             // +(x)~|x|
     LongInt b=*this;
     b.minus=0;
     return b;
@@ -1270,7 +1295,7 @@ LongInt  LongInt::operator /(LongInt b)//a=this;
     {
         qDebug()<<"longint.cpp:Error "<<"\n"
                 <<*this<<"\\0 = BAMMMMMMMMMMMM!!!!";
-        QApplication::exit();
+        exit(0);
     }
     if((*this) < b)
     {
@@ -1279,6 +1304,8 @@ LongInt  LongInt::operator /(LongInt b)//a=this;
     int k;
     LongInt result_long_int;
     LongInt part;
+    result_long_int.minus=!minus*b.minus+minus*!b.minus;
+    //minus=b.minus=0;
     QVector<int>::iterator iter=number.begin();
     for(;iter<number.end();iter++)
     {

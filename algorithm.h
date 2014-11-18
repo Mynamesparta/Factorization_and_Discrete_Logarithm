@@ -4,7 +4,6 @@
 #include <QVector>
 #include <QStack>
 #include <QApplication>
-
 //#include "algorithm.h"
 //#include "longdouble.h"
 
@@ -26,6 +25,8 @@ protected:
     static bool is_Time_to_qDebug;
 public:
     LongInt();
+    LongInt(const LongInt&);
+    //LongInt(LongInt);
     LongInt(QString);
     LongInt(int);
     virtual ~LongInt();
@@ -144,6 +145,7 @@ public:
      static LongInt  HelloWorldofTest(LongInt, LongInt );
 
 protected:
+     static LongInt Random(LongInt,LongInt);
      static void FFT(QVector< std::complex<double> >&,bool);
      static LongInt HCD(LongInt,LongInt);
      static LongInt Modular_exponentiation(LongInt a,LongInt m, LongInt r);

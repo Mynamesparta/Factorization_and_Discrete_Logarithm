@@ -30,7 +30,8 @@ LongInt DiscreteLogarithm::Primitive(LongInt g,LongInt b,LongInt n)
 
 LongInt DiscreteLogarithm::Shank(LongInt g,LongInt b,LongInt n)
 {
-    LongInt _g(1),g_a,i(1),j;
+    qDebug()<<n<<(Algorithm::Agrawal_Kayal_Saxena(n)?"prime":"");
+    LongInt _g(1),g_a,i(1),j,begin;
     LongInt a=LongInt::Sqrt(n-1)+1;
     qDebug()<<"a="<<a;
     QVector<LongInt> L_1,L_2;
@@ -48,12 +49,14 @@ LongInt DiscreteLogarithm::Shank(LongInt g,LongInt b,LongInt n)
         L_1<<_g;
     }
     _g=b;
+    begin=_g;
     qDebug()<<L_1;
     for(j=0;j<L_1.length();++j)
     {
         qDebug()<<L_1[j.toInt()]<<"?"<<_g;
         if(L_1[j.toInt()]==_g)
         {
+            qDebug()<<"Test:"<<g<<"^"<<(a*j)<<" mod"<<n<<"="<<((g^(a*j ))%n)<<"=="<<b;
             return (a*j );
         }
     }
@@ -63,7 +66,7 @@ LongInt DiscreteLogarithm::Shank(LongInt g,LongInt b,LongInt n)
         _g=_g%n;
         //L_2<<_g;
         qDebug()<<"_g="<<_g;
-        if(_g==1)
+        if(_g==begin)
         {
             return (-LongInt(0));
         }
@@ -72,12 +75,11 @@ LongInt DiscreteLogarithm::Shank(LongInt g,LongInt b,LongInt n)
             qDebug()<<L_1[j.toInt()]<<"?"<<_g;
             if(L_1[j.toInt()]==_g)
             {
+                qDebug()<<"Test:"<<g<<"^"<<(a*j - i)<<" mod"<<n<<"="<<((g^(a*j - i))%n)<<"=="<<b;
                 return (a*j - i);
             }
         }
     }
     qDebug()<<L_1;
-    qDebug()<<L_2;
-    return n;
-
+    return -LongInt(0);
 }

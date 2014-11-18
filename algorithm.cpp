@@ -436,6 +436,11 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
         a=t;
         //========================================
     }
+    if(b==0)
+    {
+        qDebug()<<"algorithm.cpp:Modular_Multiplicative_Inverse: HCD(a,mod)="<<a;
+        qDebug()<<"an_1="<<an_1<<"maybe wrong";
+    }
     if(an_1<0)
     {
         an_1=mod-an_1;
@@ -444,6 +449,10 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
 }
 LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a,LongInt mod)
 {
+    if(a<LongInt(0))
+    {
+        a+=mod;
+    }
     //
     LongInt t;
     LongInt an_2=0,an_1=1;
@@ -452,18 +461,24 @@ LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a,LongInt mod)
     LongInt b=a;
         a=mod;
 
-    while(b!=1)
+    while(b!=1&&b!=0)
     {
-        an_2= an_2 - an_1*(a/b);
+        //qDebug()<<a<<b;
+        an_2-=an_1*(a/b);
         invert=an_1;
         an_1=an_2;
         an_2=invert;
-
         //==========algorithm=HCD(a,b)============
         t=b;
         b=a%b;
         a=t;
         //========================================
+    }
+    if(b==0)
+    {
+        qDebug()<<"algorithm.cpp:Modular_Multiplicative_Inverse: HCD(a,mod)="<<a;
+        qDebug()<<"Inverse number for a does not exist";
+        return -LongInt(0);
     }
     //
     if(an_1<LongInt(0))
@@ -538,7 +553,7 @@ void Algorithm::FFT(QVector< std::complex<double> > &a, bool invert)
     }
     FFT(a0,invert);
     FFT(a1,invert);
-    static double pi_2=M_PI *2;
+    static double pi_2;//=M_PI *2;
     double ang=(pi_2/n)*(invert?-1:1);
     std::complex<double> w(1),wn(cos(ang),sin(ang));
     for(i=0;i<n/2;i++)
@@ -656,10 +671,13 @@ bool Algorithm::Lehmer(LongInt a,int r)
     for(int i=1;i<=r;i++)
     {
         //============================random===========
+        /*/
         _a=LongInt(std::rand());
         _a<<=10;
         _a/=LongInt(RAND_MAX+1);
         _a=(_a % a-2)+2;
+        /*/
+        _a=Random(2,a-1);
         qDebug()<<"random="<<_a;
         //=============================================
         a_j=Modular_exponentiation(_a,a,t);
@@ -691,11 +709,14 @@ bool Algorithm::Miller_Rabin(LongInt a, int r)
     for(int i=1;i<=r;i++)
     {
         //==============random====
+        /*/
         _a=LongInt(std::rand())+1;
         _a<<=10;
         _a/=LongInt(RAND_MAX);
         qDebug()<<_a;
         _a=(_a % (a-2))+2;
+        /*/
+        _a=Random(2,a-1);
         qDebug()<<"random="<<_a;
         a_t=_a;
         //========================
@@ -735,10 +756,13 @@ bool Algorithm::Solovay_Strassen(LongInt a,int r)
     for(int i=1;i<=r;i++)
     {
         //============================random===========
+        /*/
         _a=LongInt(std::rand());
         _a<<=10;
         _a/=LongInt(RAND_MAX+1);
         _a=( _a % (a-2))+2;
+        /*/
+        _a=Random(2,a-1);
         qDebug()<<"random="<<_a;
         a_j=_a;
         //=============================================
@@ -904,11 +928,30 @@ LongInt Algorithm::Eulers_totient(LongInt n)
     return ( n!=1 ) ? (n-1) * ret : ret;
 }
 
+LongInt Algorithm::Random(LongInt inf,LongInt sup)// random є [inf;sup]
+{
+    if(inf==sup)
+    {
+        return sup;
+    }
+    if(inf>sup)
+    {
+        return -LongInt(0);
+    }
+    LongInt _a;
+    _a=LongInt(std::rand());
+    _a<<=10;
+    //_a/=LongInt(RAND_MAX+1);
+    _a=( _a % (sup-inf+1))+inf;
+    qDebug()<<inf<<"<="<<_a<<"<="<<sup;
+    return _a;
+}
+
 //============================================================================================================
 
 LongInt Algorithm::HelloWorldofTest(LongInt a, LongInt b)
 {
-    return Algorithm::Eulers_totient(a);
+    return Lehmer(11);//Algorithm::Random(-LongInt(1),1);
     LongInt max(1);
     max.resize(6);
     for(LongInt i(10);i<max;i+=1)

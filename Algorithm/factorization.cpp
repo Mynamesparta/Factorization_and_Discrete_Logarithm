@@ -1,5 +1,4 @@
 #include "factorization.h"
-
 Factorization::Factorization()
 {
 
@@ -159,98 +158,272 @@ QVector<LongInt> Factorization::Pollard(LongInt n)
 
 QVector<LongInt> Factorization::Lenstra(LongInt n)
 {
+    Point::setMod(n);
     QVector<LongInt> result;
-    LongInt s=LongInt::Sqrt_n(n,3)+1;
-    //-----------
-    LongInt r(1);
-    //-----------
-    LongInt q;
-    q=Modular_Multiplicative_Inverse(r,s);
-    qDebug()<<n<<r<<s<<q;
-    LongInt r_mod=(q*n)%s;
-    qDebug()<<"r_mod"<<r_mod;
-    LongInt i(1);
-    LongInt a[3],b[3],c[3];
-    for(;r<s;++r)
+    LongInt B(10000);
+    LongInt a,b,_hcd;
+    Point P_0;
+    while(1)
     {
-        if(HCD(r,s)!=1)
+        if(Algorithm::Agrawal_Kayal_Saxena(n))
         {
-            continue;
+            result<<n;
+            return result;
         }
-        b[0]=0;c[0]=0;
-        a[1]=(r_mod*q)%s;
-        b[1]=1;
-        c[1]=((n-r*r_mod)/s * q)%s;
-        qDebug()<<"a[0]="<<a[0];
-        qDebug()<<"a[1]="<<a[1];
-        qDebug()<<"b[0]="<<b[0];
-        qDebug()<<"b[1]="<<b[1];
-        qDebug()<<"c[0]="<<c[0];
-        qDebug()<<"c[1]="<<c[1];
-        qDebug()<<"start";
-        i=1;
+        //====================initialization
         while(1)
         {
-            ++i;
-            qDebug()<<"i="<<i;
-            if(i.last()%2)
+            P_0.setPoint(Random(0,n-1),Random(0,n-1));
+            qDebug()<<P_0;
+            a=Random(0,n-1);
+            b=((P_0.y()^2)-(P_0.x()^3)-a*P_0.x())%n;
+            _hcd=HCD(n,(a^3)*4+(b^2)*27);
+            if(_hcd==n)
+                continue;
+            if(_hcd==1)
             {
-                qDebug()<<a[0]<<a[1];
-                qDebug()<<( q=(a[0]%a[1]) );
-                qDebug()<<"q="<<q;
-                a[2]=a[0]-q*a[1];
-                a[0]=a[1];
-                a[1]=a[2];
-
-                b[2]=b[0]-q*b[1];
-                b[0]=b[1];
-                b[1]=b[2];
-
-                c[2]=(c[0]-q*c[1])%s;
-                c[0]=c[1];
-                c[1]=c[2];
-            }
-            else
-            {
-
-            }
-            qDebug()<<"a[0]="<<a[0];
-            qDebug()<<"a[1]="<<a[1];
-            qDebug()<<"b[0]="<<b[0];
-            qDebug()<<"b[1]="<<b[1];
-            qDebug()<<"c[0]="<<c[0];
-            qDebug()<<"c[1]="<<c[1];
-            if(a[1]==0)
-            {
+                qDebug()<<"y^2 = x^3 + "<<a<<"x + "<<b;
+                qDebug()<<P_0;
+                Point::setElliptic_Curve(a,b);
                 break;
             }
-            if(i==10)
+            result<<_hcd;
+            n/=_hcd;
+        }
+        Point P_k=P_0;
+        for(LongInt i(2) ;i<B;++i)
+        {
+            if(Algorithm::Agrawal_Kayal_Saxena(i))
             {
-                break;
+                a=i;
+                while(a<B)
+                {
+                    //_hcd=Algorithm::HCD()
+                    break;
+                }
             }
         }
+        //==================================
+
+        //return result;//!!!!
     }
-    //
     return result;
 }
 
 QVector<LongInt> Factorization::World_of_Test(LongInt a)
 {
+    a%LongInt(1);
+    Algorithm::Modular_Multiplicative_Inverse(5,25);
     /*/
-    for(LongInt i(1);i<1000;++i)
-    {
-        qDebug()<<i<<"="<<Factorization::Fermat(i);
-    }
+    Point::setMod(23);
+    Point::setElliptic_Curve(1,1);
+    //Point(3,-10)+Point(11,3);
+    //Point(0,1)+Point(0,1);
     /*/
-    qDebug()<<Factorization::Fermat(995);
     QVector<LongInt> result;
-    //result<<(LongInt(102)-LongInt(97));
-    /*/
-    a=        LongInt("78");
-    a.minus=true;
-    LongInt b=LongInt("4");
-    b.minus=true;
-    //qDebug()<<a%b;
-    /*/
     return result;
+}
+//========================================================class=Point================================================
+LongInt Point::_mod=-LongInt(0);
+LongInt Point::_a=0;
+LongInt Point::_b=0;
+Point::Point(LongInt x,LongInt y):Algorithm(),_x(x),_y(y)
+{
+
+}
+
+Point::Point():Algorithm(),_x(0),_y(0)
+{
+
+}
+
+//=============static==================
+void Point::setA(LongInt A)
+{
+    _a=(A%mod());
+}
+
+void Point::setB(LongInt B)
+{
+    _b=B%mod();
+}
+
+void Point::setElliptic_Curve(LongInt A,LongInt B)
+{
+    _a=A%mod();
+    _b=B%mod();
+}
+
+LongInt Point::a()
+{
+    return _a;
+}
+
+LongInt Point::b()
+{
+    return _b;
+}
+
+void Point::setMod(LongInt mod)
+{
+    if(mod<=0)
+        _mod=-LongInt(1);
+    else
+        _mod=mod;
+}
+
+LongInt Point::mod()
+{
+    return _mod;
+}
+//=====================================
+LongInt Point::x()
+{
+    return _x;
+}
+
+LongInt Point::y()
+{
+    return _y;
+}
+
+void Point::setX(LongInt x)
+{
+    _x=x%mod();
+}
+
+void Point::setY(LongInt y)
+{
+    _y=y%mod();
+}
+
+void Point::setPoint(LongInt x,LongInt y)
+{
+    _x=x%mod();
+    _y=y%mod();
+}
+
+
+Point& Point::operator =(const Point& b)
+{
+    if(this==&b)
+    {
+        return *this;
+    }
+    this->_x=b._x;
+    this->_y=b._y;
+    return *this;
+}
+
+bool Point::operator ==(const Point &b)
+{
+    if(this->_x==b._x&&this->_y==b._y)
+    {
+        return true;
+    }
+    else return false;
+}
+
+Point Point::operator +(Point R)
+{
+    if(x()==0&&y()==0)
+    {
+        return R;
+    }
+    if(R.x()==0&&R.y()==0)
+    {
+        return *this;
+    }
+    LongInt tg,inverse;
+    if(*this==R)
+    {
+        inverse=Modular_Multiplicative_Inverse(this->y()*2,mod());
+        if(inverse==0&&inverse.minus)
+        {
+            qDebug()<<"find divisor of "<<mod()<<":"<<this->y()*2;
+            exit(0);
+        }
+        tg=(+((this->x()^2)*3 + a()))*inverse;
+        qDebug()<<"Q==R:tg="<<tg;
+    }//                   !! +?-
+    else
+    {
+        inverse=Modular_Multiplicative_Inverse( +(this->x()-R.x()) , mod() );
+        if(inverse==0&&inverse.minus)
+        {
+            qDebug()<<"find divisor of "<<mod()<<":"<<+(this->x()-R.x());
+            exit(0);
+        }
+        tg=inverse*( (this->x()>=R.x()) ? (this->y() - R.y()) : ( R.y()-this->y()) );
+        qDebug()<<"Q!=R:tg="<<tg;
+    }// +(x)~|x|
+    tg=tg%mod();
+    Point result;
+    result.setX(((tg^2) - this->_x -R._x)%_mod);
+    result.setY((tg*(_x-result._x) - _y)%_mod);
+    //result.setY(tg-result.x()-_y);
+    qDebug()<<tg<<(_x-result._x)<<tg*(_x-result._x)<<(tg*(_x-result._x) - _y);
+    qDebug()<<"result"<<result;
+    //qDebug()<<"~test:"<<(tg-result.x()-_y);
+    return result;
+}
+Point Point::operator -(Point b)
+{
+    b.setY(-b.y());
+    return   *this+b;
+}
+Point Point::operator *(LongInt k)
+{
+    if(k==2)
+    {
+        return *this+*this;
+    }
+    if(k==0)
+    {
+        qDebug()<<"factorization.cpp:Error in operator* k = 0, Point = "<<*this;
+        throw *this;
+    }
+    QVector<bool> Binary_number;
+    while(k!=0)
+    {
+        if(k.last()%2==0)
+        {
+            Binary_number<<0;
+        }
+        else
+        {
+            Binary_number<<1;
+        }
+        k/=2;
+    }
+    //qDebug()<<"Binary:"<<Binary_number;
+    Point result,a=*this;
+    LongInt test;
+    LongInt x=1;
+    //qDebug()<<"x="<<x;
+    while(1)
+    {
+        if(Binary_number.takeFirst())
+        {
+            qDebug()<<"result+a:";
+            result=result+a;
+            test+=x;
+        }
+        //qDebug()<<"x="<<x;
+        if(Binary_number.isEmpty())
+        {
+            break;
+        }
+        qDebug()<<"a+a:";
+        a=a+a;
+        x*=2;
+    }
+    //qDebug()<<"k="<<test;
+    return result;
+}
+
+QDebug operator <<(QDebug qd,Point a)
+{
+    qd<<"Point("<<a.x()<<","<<a.y()<<")";
+    return qd;
 }

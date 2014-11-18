@@ -10,7 +10,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Factorization_and_Discrete_Logarithm
 TEMPLATE = app
-
+#CONFIG += console
+CONFIG += c++11
+#QMAKE_CXXFLAGS += -std=c++11
 SOURCES += main.cpp\
         widget.cpp \
     algorithm.cpp \
