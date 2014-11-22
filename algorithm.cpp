@@ -439,7 +439,8 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
     if(b==0)
     {
         qDebug()<<"algorithm.cpp:Modular_Multiplicative_Inverse: HCD(a,mod)="<<a;
-        qDebug()<<"an_1="<<an_1<<"maybe wrong";
+        qDebug()<<"Inverse number for a does not exist";
+        return a;
     }
     if(an_1<0)
     {
@@ -447,8 +448,9 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
     }
     return an_1;
 }
-LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a,LongInt mod)
+LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* search_bag)
 {
+    qDebug()<<"algorithm.cpp: Inverse-"<<a<<mod;
     if(a<LongInt(0))
     {
         a+=mod;
@@ -474,16 +476,26 @@ LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a,LongInt mod)
         a=t;
         //========================================
     }
-    if(b==0)
+    if(b==0&&a!=mod&&a!=1)
     {
         qDebug()<<"algorithm.cpp:Modular_Multiplicative_Inverse: HCD(a,mod)="<<a;
         qDebug()<<"Inverse number for a does not exist";
-        return -LongInt(0);
+        if(search_bag!=NULL)
+        {
+            delete search_bag;
+            search_bag=new bool(false);
+        }
+        return a;
     }
     //
     if(an_1<LongInt(0))
     {
         return mod+an_1;
+    }
+    if(search_bag!=NULL)
+    {
+        delete search_bag;
+        search_bag=new bool(true);
     }
     return an_1;
 }

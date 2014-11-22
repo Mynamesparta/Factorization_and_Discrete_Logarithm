@@ -584,6 +584,44 @@ LongInt& LongInt::operator =(const int b)
     normalization();
 }
 
+LongInt& LongInt::operator =(const QString qs_number)
+{
+    number.clear();
+    qDebug()<<qs_number;
+    minus=0;
+    if(qs_number==""||qs_number==" ")
+    {
+        number.push_back(0);
+        return *this;
+    }
+    QString numeral;
+    if(!qs_number.isEmpty())
+    {
+        for(int i=qs_number.length()-1;i>=0;i--)
+        {
+            numeral=qs_number[i]+numeral;
+            if(numeral.length()==_baza_for_initializatio)
+            {
+                number.push_front(numeral.toInt());
+                numeral.clear();
+                continue;
+            }
+            if(i==0)
+            {
+                number.push_front(numeral.toInt());
+                numeral.clear();
+            }
+        }
+    }
+    return *this;
+}
+
+LongInt& LongInt::operator =(const char* num)
+{
+    qDebug()<<*num;
+    return *this=QString(num);
+}
+
 //=============================operator=(+=)======================================
 LongInt& LongInt::operator +=(const LongInt b)
 {

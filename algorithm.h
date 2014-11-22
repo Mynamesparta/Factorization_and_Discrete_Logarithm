@@ -63,6 +63,8 @@ public:
     LongInt& operator ++();
     LongInt& operator =(const LongInt );
     LongInt& operator =(const int );
+    LongInt& operator =(const QString);
+    LongInt& operator =(const char*);
     LongInt& operator +=(const LongInt );
     LongInt& operator +=(const int );
     LongInt& operator -=(const LongInt );
@@ -141,7 +143,7 @@ public:
 
 
      static int Modular_Multiplicative_Inverse(int,int);
-     static LongInt Modular_Multiplicative_Inverse(LongInt,LongInt);
+     static LongInt Modular_Multiplicative_Inverse(LongInt, LongInt, bool* search_bag=NULL);
      static LongInt  HelloWorldofTest(LongInt, LongInt );
 
 protected:

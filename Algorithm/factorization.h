@@ -27,6 +27,7 @@ private:
     static LongInt _mod;
     static LongInt _a;
     static LongInt _b;
+    static LongInt _divisor;
     //y^2=x^3+ax+b;
 public:
     Point(LongInt x,LongInt y);
@@ -39,6 +40,7 @@ public:
     static void setElliptic_Curve(LongInt,LongInt);
     static LongInt a();
     static LongInt b();
+    static LongInt divisor();
 
     LongInt x();
     LongInt y();
@@ -48,6 +50,7 @@ public:
 
     Point &operator =(const Point &b);
     bool  operator ==(const Point &b);
+    bool  operator ==(LongInt);
     Point operator +(Point b);
     Point operator -(Point b);
     Point operator *(LongInt);
