@@ -19,7 +19,7 @@ static LongInt (*current_algorithm)(LongInt,LongInt);
 class LongInt
 {
 protected:
-    static LongInt mod(LongInt,LongInt);
+    static LongInt mod(const LongInt&,const LongInt&);
     static const int _baza_for_initializatio=1;
     static const int _baza=10;
     static bool is_Time_to_qDebug;
@@ -35,16 +35,18 @@ public:
     static void setAlgorithm(QString);
     static int baza_for_initializatio();
     static int baza();
-    static LongInt Sqrt(LongInt);
-    static LongInt Sqrt_n(LongInt,LongInt);
+    static LongInt Sqrt(const LongInt&);
+    static LongInt Sqrt_n(const LongInt&,const LongInt&);
 
     void push_front(int num);
     void push_back(int num);
-    void clear();
+    void clear(bool normalization=true);
     void normalization();
     void _normalization();
-    bool isEmpty();
-    int  length();
+    bool isEmpty() const;
+    inline int  length()const;
+    inline int  length();
+    inline int last()const;
     int last();
     void resize(int); //Null
 
@@ -53,48 +55,48 @@ public:
 
     QVector<int> getVector_of_Number(int first=0, int renge=0 ,bool remove=1);
     //+++++++++++++++++++++++++++++operator+++++++++++++++++++++++++++++++++++++++
-    LongInt  operator +(LongInt );
-    LongInt  operator +(int );
-    LongInt  operator +();
-    LongInt  operator -(LongInt );
-    LongInt  operator -(int );
-    LongInt  operator -();
+    LongInt  operator +(LongInt ) const;
+    LongInt  operator +(int )const;
+    LongInt  operator +()const;
+    LongInt  operator -(const LongInt& )const;
+    LongInt  operator -(int )const;
+    LongInt  operator -() const;
     LongInt& operator --();
     LongInt& operator ++();
-    LongInt& operator =(const LongInt );
+    LongInt& operator =(const LongInt& );
     LongInt& operator =(const int );
     LongInt& operator =(const QString);
     LongInt& operator =(const char*);
-    LongInt& operator +=(const LongInt );
+    LongInt& operator +=(const LongInt& );
     LongInt& operator +=(const int );
-    LongInt& operator -=(const LongInt );
+    LongInt& operator -=(const LongInt& );
     LongInt& operator -=(const int );
-    bool  operator >(LongInt);
+    bool  operator >( LongInt)const;
     bool  operator >(int);
-    bool  operator <(LongInt);
+    bool  operator <(LongInt)const;
     bool  operator <(int);
-    bool  operator ==(LongInt);
+    bool  operator ==(LongInt)const;
     bool  operator ==(int);
-    bool  operator !=(LongInt);
-    bool  operator !=(int);
-    bool  operator >=(LongInt);
+    bool  operator !=(LongInt)const;
+    bool  operator !=(int)const;
+    bool  operator >=(LongInt)const;
     bool  operator >=(int);
-    bool  operator <=(LongInt);
+    bool  operator <=(LongInt)const;
     bool  operator <=(int);
     LongInt  operator <<(int);
     LongInt& operator <<=(int);
     LongInt operator >>(int);
-    LongInt  operator *(LongInt);
+    LongInt  operator *(const LongInt&)const;
     LongInt  operator *(int);
-    LongInt& operator *=(LongInt);
+    LongInt& operator *=(const LongInt&);
     LongInt& operator *=(int b);
-    LongInt  operator /(LongInt);
+    LongInt  operator /(const LongInt&)const;
     LongInt  operator /(int);
-    LongInt& operator /=(LongInt);
+    LongInt& operator /=(const LongInt&);
     LongInt& operator /=(int);
-    LongInt  operator %(LongInt);
+    LongInt  operator %(const LongInt&)const;
     LongInt  operator %(int);
-    LongInt  operator ^(LongInt);
+    LongInt  operator ^(const LongInt&)const;
     LongInt  operator ^(int);
     int &operator [](int);
     friend QDebug operator<<(QDebug,LongInt);

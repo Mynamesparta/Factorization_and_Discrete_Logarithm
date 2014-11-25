@@ -17,6 +17,7 @@ public:
     static QVector<LongInt> Fermat(LongInt);
     static QVector<LongInt> Pollard(LongInt);
     static QVector<LongInt> Lenstra(LongInt);
+    static LongInt Generator(LongInt);
     static QVector<LongInt> World_of_Test(LongInt);
 };
 
@@ -33,7 +34,7 @@ public:
     Point(LongInt x,LongInt y);
     Point();
 
-    static LongInt mod();
+    static LongInt mod() ;
     static void setMod(LongInt);
     static void setA(LongInt _a);
     static void setB(LongInt);
@@ -42,18 +43,18 @@ public:
     static LongInt b();
     static LongInt divisor();
 
-    LongInt x();
-    LongInt y();
+    LongInt x()const;
+    LongInt y()const;
     void setX(LongInt);
     void setY(LongInt);
     void setPoint(LongInt,LongInt);
 
     Point &operator =(const Point &b);
-    bool  operator ==(const Point &b);
+    bool  operator ==(const Point &b) const;
     bool  operator ==(LongInt);
-    Point operator +(Point b);
+    Point operator +(const Point &b) const;
     Point operator -(Point b);
-    Point operator *(LongInt);
+    Point operator *(LongInt) const;
     friend QDebug operator <<(QDebug ,Point);
 };
 

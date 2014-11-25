@@ -35,6 +35,7 @@ Widget::Widget(QWidget *parent)
             this,SLOT(slot_ChoseAlgorithm(QString)));
     //=====================================================
     slot_ChoseAlgorithm("Fermat");
+    qDebug()<<"widget.cpp List of algorithm:"<<algorithm.getListofAlgorithm();
 }
 
 Widget::~Widget()

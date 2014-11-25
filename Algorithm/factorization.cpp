@@ -273,6 +273,21 @@ QVector<LongInt> Factorization::Lenstra(LongInt n)
     return result;
 }
 
+LongInt Factorization::Generator(LongInt g)
+{
+    LongInt result,rand;
+    QVector<LongInt> factorizicion=Factorization::Lenstra(g-1);
+    QVector<LongInt>::iterator iter;
+    while(1)
+    {
+        rand=Random(2,g-1);
+        for(iter=factorizicion.begin();iter<factorizicion.end();iter++)
+        {
+            //result=Modular_exponentiation(rand,g,)
+        }
+    };
+}
+
 QVector<LongInt> Factorization::World_of_Test(LongInt a)
 {
     qDebug()<<(Point(0,0)==0);
@@ -351,12 +366,12 @@ LongInt Point::mod()
     return _mod;
 }
 //=====================================
-LongInt Point::x()
+LongInt Point::x() const
 {
     return _x;
 }
 
-LongInt Point::y()
+LongInt Point::y()const
 {
     return _y;
 }
@@ -389,7 +404,7 @@ Point& Point::operator =(const Point& b)
     return *this;
 }
 
-bool Point::operator ==(const Point &b)
+bool Point::operator ==(const Point &b)const
 {
     if(this->_x==b._x&&this->_y==b._y)
     {
@@ -406,7 +421,7 @@ bool  Point::operator ==( LongInt b)
         false;
 }
 
-Point Point::operator +(Point R)
+Point Point::operator +(const Point& R)const
 {
     if(x()==0&&y()==0)
     {
@@ -456,12 +471,12 @@ Point Point::operator +(Point R)
 
     return result;
 }
-Point Point::operator -(Point b)
+Point Point::operator -( Point b)
 {
     b.setY(-b.y());
     return   *this+b;
 }
-Point Point::operator *(LongInt k)
+Point Point::operator *(LongInt k)const
 {
     if(k==2)
     {
@@ -520,3 +535,5 @@ QDebug operator <<(QDebug qd,Point a)
     qd<<"Point("<<a.x()<<","<<a.y()<<")";
     return qd;
 }
+//==============================================
+
