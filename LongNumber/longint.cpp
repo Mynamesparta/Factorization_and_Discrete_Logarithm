@@ -118,6 +118,7 @@ int LongInt::baza()
 }
 LongInt LongInt::mod(const LongInt &a, const LongInt &b)
 {
+    //qDebug()<<"longint.cpp:mod-"<<a<<b;
     if(b==0&&b.minus)
     {
         qDebug()<<"longint.cpp:"<<a<<"% -0 = ...?";
@@ -226,9 +227,11 @@ LongInt LongInt::Sqrt_n(const LongInt &a, const LongInt &k)
 }
 
 //=================================================================
-void LongInt::clear()
+void LongInt::clear(bool normalization)
 {
     number.clear();
+    if(normalization)
+        number<<0;
     minus=0;
 }
 
@@ -340,11 +343,14 @@ void LongInt::resize(int n)
 
 void LongInt::push_front(int num)
 {
+    /*/qDebug()<<"longint.cpp:push_front"<<*this;
     if(number.length()==1&&number.last()==0)
     {
         number.clear();
     }
+    /*/
     number.push_front(num);
+    //qDebug()<<"longint.cpp:push_front"<<*this;
     //qDebug()<<num;
 }
 void LongInt::push_back(int num)
@@ -480,7 +486,7 @@ LongInt LongInt::operator +(LongInt b)const//a=this;
         return *this;
     }
     LongInt a,c;
-    int sign=(this->minus*!b.minus+!this->minus*b.minus)?-1:1;
+    //qDebug()<<*this<<b;
     if((+*this)<(+b))//
     {
         c=b;
@@ -492,7 +498,11 @@ LongInt LongInt::operator +(LongInt b)const//a=this;
     {
         a=*this;
     }
+
+    c.clear(false);
+    int sign=(!a.minus*b.minus+a.minus*!b.minus)?-1:1;
     c.minus=a.minus;
+    //qDebug()<<a<<b<<sign;
     while(!b.isEmpty())
     {
         c.push_front(a.number.takeLast()+sign*b.number.takeLast());
@@ -1221,6 +1231,7 @@ LongInt LongInt::operator >>(int num)
 //=============================operator=(*)==LongInt====================================
 LongInt LongInt::operator *(const LongInt &b) const//a=this;
 {
+    //qDebug()<<"longint.cpp:operator * :"<<*this<<b;
     static bool inAlgorithm=false;
     if(!inAlgorithm&&current_algorithm!=NULL)
     {
@@ -1248,6 +1259,7 @@ LongInt LongInt::operator *(const LongInt &b) const//a=this;
     iter_for_a--;
     iter_b--;
     LongInt result_long_int;
+    c.clear(false);
     for(;iter_b>=b.number.constBegin();iter_b--)
     {
         if(*iter_b==0)
@@ -1278,12 +1290,14 @@ LongInt LongInt::operator *(const LongInt &b) const//a=this;
             c.push_front(k);
             k=0;
         }
+        c.normalization();
         //c<<i++;
         //qDebug()<<(c<<i);
         result_long_int+=(c<<i++);
-        c.clear();
+        c.clear(false);
     }
     result_long_int.minus=minus*!b.minus+!minus*b.minus;
+    //qDebug()<<"longint.cpp:operator *:"<<result_long_int;
     return result_long_int;//<<i;
 }
 //=============================operator=(*)==int==================================
@@ -1304,6 +1318,7 @@ LongInt LongInt::operator *(int b)
     if(b<_baza)
     {
         LongInt result_long_int;
+        result_long_int.clear(false);
         QVector<int>::iterator iter=number.end();
         iter--;
         int i=0;
@@ -1375,6 +1390,7 @@ LongInt  LongInt::operator /(const LongInt &b) const//a=this;
             continue;
         }
         k=0;
+        //qDebug()<<part<<b;
         while(part>=b)
         {
             k++;

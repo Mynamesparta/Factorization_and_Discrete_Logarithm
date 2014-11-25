@@ -426,6 +426,8 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
 
     while(b!=0&&b!=1)
     {
+        //qDebug()<<"a b:"<<a<<b;
+        //qDebug()<<an_2<<an_1;
         an_2= an_2 - an_1*(a/b);
         invert=an_1;
         an_1=an_2;
@@ -450,10 +452,14 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
 }
 LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* search_bag)
 {
-    qDebug()<<"algorithm.cpp: Inverse-"<<a<<mod;
+    //qDebug()<<"algorithm.cpp: Inverse-"<<a<<mod;
     if(a<LongInt(0))
     {
         a+=mod;
+    }
+    if(a>=mod)
+    {
+        a=a%mod;
     }
     //
     LongInt t;
@@ -465,8 +471,9 @@ LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* 
 
     while(b!=1&&b!=0)
     {
-        //qDebug()<<a<<b;
-        an_2-=an_1*(a/b);
+        //qDebug()<<an_2<<an_1;
+        //qDebug()<<"a b:"<<a<<b;
+        an_2=an_2-an_1*(a/b);
         invert=an_1;
         an_1=an_2;
         an_2=invert;
@@ -490,6 +497,7 @@ LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* 
     //
     if(an_1<LongInt(0))
     {
+        //qDebug()<<"algorithm.cpp: inverse="<<an_1+mod;
         return mod+an_1;
     }
     if(search_bag!=NULL)
@@ -497,6 +505,7 @@ LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* 
         delete search_bag;
         search_bag=new bool(true);
     }
+    //qDebug()<<"algorithm.cpp: inverse="<<an_1;
     return an_1;
 }
 
@@ -881,6 +890,7 @@ bool Algorithm::Agrawal_Kayal_Saxena(LongInt a)
 
 LongInt Algorithm::HCD(LongInt a,LongInt b)
 {
+    a=+a;b=+b;
     LongInt t;
     while(b!=0)
     {
@@ -895,6 +905,12 @@ LongInt Algorithm::HCD(LongInt a,LongInt b)
 
 LongInt Algorithm::Modular_exponentiation(LongInt a,LongInt m, LongInt r)
 {
+    //qDebug()<<"algorithm.cpp: Modular_exponentiation"<<a<<m<<r;
+    if(r==0)
+    {
+        //qDebug()<<"algorithm.cpp: Modular_exponentiation :( 1 )";
+        return LongInt(1);
+    }
     QVector<LongInt> part;
     part<<1;
     LongInt a_k(1),k(1);
@@ -907,11 +923,14 @@ LongInt Algorithm::Modular_exponentiation(LongInt a,LongInt m, LongInt r)
         if(part.last()==1)
         {
             part.removeLast();
+            //qDebug()<<"algorithm.cpp: Modular_exponentiation :"<<part.value( ((r % LongInt(part.length()))).toInt());
             return part.value( ((r % LongInt(part.length()))).toInt());
         }
         k+=1;
         if(k>r)
         {
+            //qDebug()<<"algorithm.cpp: Modular_exponentiation :"<<part.value( ((r % LongInt(part.length()))).toInt());
+            return part.value( ((r % LongInt(part.length()))).toInt());
             return a_k;
         }
     }

@@ -55,7 +55,7 @@ QString ListofAlgorithm::run_discrete_logarithm(QString first, QString second, Q
 
 QString ListofAlgorithm::getListofAlgorithm()
 {
-    return "Fermat Pollard Lenstra Primitive Shank World_of_Test";
+    return "Fermat fPollard Lenstra Primitive Shank dPollard World_of_Test";
 }
 
 int ListofAlgorithm::set(QString name )
@@ -67,10 +67,10 @@ int ListofAlgorithm::set(QString name )
         qDebug()<<"listofalgorithm.h:current algorithm \"Fermat\"";
         return 1;
     }
-    if(name=="Pollard")
+    if(name=="fPollard")
     {
         current_algorithm_factorization=&Factorization::Pollard;
-        qDebug()<<"listofalgorithm.h:current algorithm \"Pollard\"";
+        qDebug()<<"listofalgorithm.h:current algorithm \"fPollard\"";
         return 1;
     }
     if(name=="Lenstra")
@@ -95,6 +95,12 @@ int ListofAlgorithm::set(QString name )
     {
         current_algorithm_logarithm=&DiscreteLogarithm::Shank;
         qDebug()<<"listofalgorithm.h:current algorithm \"Shank\"";
+        return 3;
+    }
+    if(name=="dPollard")
+    {
+        current_algorithm_logarithm=&DiscreteLogarithm::Pollard;
+        qDebug()<<"listofalgorithm.h:current algorithm \"dPollard\"";
         return 3;
     }
     name_of_current_algorithm="";
