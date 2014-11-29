@@ -1,6 +1,6 @@
 #include "algorithm.h"
 //#include "LongNumber/longint.h"
-
+#define qD "algorithm.cpp"
 LongInt Algorithm::Karatsuba(LongInt a_1, LongInt b_1)
 {
     if(a_1.length()==1 || b_1.length()==1)//&&
@@ -52,7 +52,7 @@ LongInt Algorithm::Toom_Cook(LongInt a, LongInt b)
 
     int last_q=4;
 
-    qDebug()<<"algorithm.cpp:"<<"\"(0)\""<<Q<<R<<table.q<<table.r;
+    qDebug()<<qD<<"\"(0)\""<<Q<<R<<table.q<<table.r;
     while(a.length()>(qv_table.last().q+last_q))
     {
         qDebug()<<"algorithm.cpp:"<<"("+QString::number(k)+")"<<Q<<R<<table.q<<table.r;
