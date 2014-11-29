@@ -17,8 +17,11 @@ public:
     static QVector<LongInt> Fermat(LongInt);
     static QVector<LongInt> Pollard(LongInt);
     static QVector<LongInt> Lenstra(LongInt);
+    static QVector<LongInt> Square(LongInt);
     static LongInt Generator(LongInt);
     static QVector<LongInt> World_of_Test(LongInt);
+private:
+    static LongInt* Modular_Sqrt(const LongInt&n, const LongInt &mod);
 };
 
 class Point:public Algorithm

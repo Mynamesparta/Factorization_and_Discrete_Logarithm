@@ -237,6 +237,12 @@ void LongInt::clear(bool normalization)
 
 void LongInt::normalization()
 {
+    if(number.isEmpty())
+    {
+        number<<0;
+        minus=0;
+        return ;
+    }
     while(number.length()>0)
     {
         if(number.first()==0)

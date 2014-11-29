@@ -1,4 +1,5 @@
 #include "factorization.h"
+#define qF QString("factorization.h:")
 Factorization::Factorization()
 {
 
@@ -288,11 +289,228 @@ LongInt Factorization::Generator(LongInt g)
     };
 }
 
+QVector<LongInt> Factorization::Square(LongInt N)
+{
+    //===initialization======================
+    QVector<LongInt> result,factorization;
+    QVector<LongInt> Base,V_x_base,V_x,S_x,S_i;
+    QVector<LongInt>::const_iterator iter;
+    LongInt* modular_sqrt;
+    //=======================================
+    while(N.number.last()%2==0)
+    {
+        N/=2;
+        result<<2;
+        qDebug()<<"( 2 )";
+    }
+    if(N==1)
+    {
+        return result;
+    }
+    if(Agrawal_Kayal_Saxena(N))
+    {
+        result<<N;
+        return result;
+    }
+    else
+    {
+        factorization<<N;
+    }
+    LongInt sqrt_N;
+    static LongInt p,d;
+    static LongInt i;
+    static int j,k;
+    while(!factorization.isEmpty())
+    {
+        N=factorization.takeFirst();
+        d=2;
+        p=1;
+        Base.clear();
+        V_x_base.clear();
+        V_x.clear();
+        S_x.clear();
+        S_i.clear();
+        Base<<2;
+        while(d<N&&p<N)
+        {
+            p+=2;
+            if(Agrawal_Kayal_Saxena(p) )
+            {
+                //qDebug()<<"factorization.cpp:Square "<<_base<<n<<(n-1)/2<<"="<<(Modular_exponentiation(_base,n,(n-1)/2));
+                if(Modular_exponentiation(N,p,(p-1)/2)==1)
+                {
+                    Base<<p;
+                    d*=p;
+                }
+            }
+            if(d==N)
+            {
+                return result+Base;
+            }
+        }
+        sqrt_N=LongInt::Sqrt_n(N-1,2)+1;
+        //qDebug()<<N;
+        qDebug()<<"factorization.cpp:Square Base-"<<Base;
+        qDebug()<<"factorization.cpp:Sqrt(N)="<<sqrt_N;
+        for(i=0;i<100;++i)
+        {
+            V_x_base<<(((sqrt_N+i)^2)-N);
+            V_x<<V_x_base.last();
+            //qDebug()<<"factorization.cpp:Y("<<i<<")="<<Y_x.last();
+        }
+        for(i=1;i<V_x.length();i+=2)
+        {
+            V_x[i.toInt()]/=2;
+        }
+        iter=Base.constBegin();
+        iter++;
+        for(;iter<Base.constEnd();iter++)
+        {
+            qDebug()<<"factorization.cpp:current base:"<< *iter;
+            modular_sqrt=Modular_Sqrt(N,*iter);
+            i=(modular_sqrt[0]-sqrt_N)%(*iter);
+            i.normalization();
+            i=(i<LongInt()?(i+*iter):i);
+            //qDebug()<<"factorization.cpp:current Index"<<i;
+            while(i<V_x.length())
+            {
+                V_x[i.toInt()]/=*iter;
+                //qDebug()<<i<<V_x[i.toInt()];
+                i+=*iter;
+            }
+            if(modular_sqrt[0]!=modular_sqrt[1])
+            {
+                i=(modular_sqrt[1]-sqrt_N)%(*iter);
+                i.normalization();
+                i=(i<LongInt()?i+*iter:i);
+                //qDebug()<<"factorization.cpp:current Index"<<i;
+                while(i<V_x.length())
+                {
+                    V_x[i.toInt()]/=*iter;
+                    //qDebug()<<i<<V_x[i.toInt()];
+                    i+=*iter;
+                }
+            }
+            delete modular_sqrt;
+            delete (modular_sqrt+1);
+        }
+        //qDebug()<<V_x;
+        QVector<QVector<bool>> matrix(Base.length());
+        for(i=0;i<V_x.length();++i)
+        {
+            if(V_x[i.toInt()]==1)
+            {
+                qDebug()<<"factorization.cpp:гладке число(індекс число)-"<<i<<V_x_base[i.toInt()];
+                S_x<<V_x_base[i.toInt()];
+                S_i<<i;
+                for(j=0;j<Base.length();++j)
+                {
+                    if(V_x_base[i.toInt()]%Base[j]==0)
+                    {
+                        matrix[j]<<1;
+                    }
+                    else
+                    {
+                        matrix[j]<<0;
+                    }
+                }
+            }
+        }
+        bool S[S_x.length()];
+        for(j=0;j<matrix.length();++j)
+        {
+            qDebug()<<matrix[j];
+        }
+        qDebug()<<"----------------------------";
+        //==============знаходження=матриці=S============
+        for(j=0;j<S_x.length();++j)//стовбчик
+            for(i=j;i<matrix.length();++i)//рядочок
+            {
+                if(matrix[i.toInt()][j])
+                {
+                    matrix.insert(j,matrix.takeAt(i.toInt()));
+                    for(i=0;i<matrix.length();++i)
+                    {
+                        if(i!=j)
+                        {
+                            if(matrix[i.toInt()][j])
+                            {
+                                for(k=j;k<S_x.length();++k)
+                                {
+                                    matrix[i.toInt()][k]=(matrix[i.toInt()][k]+matrix[j][k])%2;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            };
+        for(j=0;j<matrix.length();++j)
+        {
+            qDebug()<<matrix[j];
+        }
+        for(i=0;i<Base.length()-1;++i)
+        {
+            S[i.toInt()]=matrix[i.toInt()][S_x.length()-1];
+            qDebug()<<"S:"<<S[i.toInt()];
+        }
+        if(!S_x.isEmpty())
+            S[S_x.length()-1]=1;
+        else
+        {
+            qDebug()<<qF+"somithing wrong:(";
+            return result;
+        }
+        //==============знаходження=дільника=============
+        d=1;
+        p=1;
+        for(j=0;j<S_x.length();++j)
+        {
+            if(S[j])
+            {
+                qDebug()<< (d*=S_x[j]);
+                qDebug()<< (p*=((sqrt_N+S_i[j])));
+            }
+        }
+        modular_sqrt=Modular_Sqrt(d,N);
+        if(p==modular_sqrt[0])
+            d=modular_sqrt[1];
+        else
+            d=modular_sqrt[0];
+        delete modular_sqrt;
+        delete (modular_sqrt+1);
+        qDebug()<<p<<d<<N;
+        i=HCD(+(p-d),N);
+        if(Algorithm::Agrawal_Kayal_Saxena( i))
+        {
+            result<<i;
+        }
+        else
+        {
+            factorization<<i;
+        }
+        //qDebug()<<result<<factorization;
+        i=N/i;
+        qDebug()<<"factorization.cpp: HCD"<<i;
+        if(Algorithm::Agrawal_Kayal_Saxena(i))
+        {
+            result<<i;
+        }
+        else
+        {
+            factorization<<i;
+        }
+        //===============================================
+        qDebug()<<result<<factorization;
+        //return result;
+    }//while(!factorization.isEmpty)
+    return result;
+}
+
 QVector<LongInt> Factorization::World_of_Test(LongInt a)
 {
-    qDebug()<<(Point(0,0)==0);
-    qDebug()<<(Point(0,0)==2);
-    qDebug()<<(Point(1,-3)==0);
+    LongInt* paint=Modular_Sqrt(15347,17);
+    qDebug()<<paint[0]<<paint[1];
     //Factorization::Lenstra(96);
     /*/
     Point::setMod(23);
@@ -300,9 +518,67 @@ QVector<LongInt> Factorization::World_of_Test(LongInt a)
     //Point(3,-10)+Point(11,3);
     //Point(0,1)+Point(0,1);
     /*/
+    delete paint;
+    delete (paint+1);
+    //qDebug()<<paint[1];//<<paint[0];
     QVector<LongInt> result;
     return result;
 }
+//========================================================private=metod==============================================
+
+LongInt* Factorization::Modular_Sqrt(const LongInt& N,const LongInt& mod)
+{\
+    register LongInt i=0;
+    register LongInt i_2;
+    register LongInt N_j=N%mod;
+    //qDebug()<<"N_j"<<N<<mod<<N_j;
+    LongInt* result=new LongInt[2];
+    while(i<mod)
+    {
+        i_2=i^2;
+        if(i_2<N_j)
+        {
+            ++i;
+        }
+        while(i_2>N_j)
+        {
+            N_j+=mod;
+        }
+        if(i_2==N_j)
+        {
+            result[0]=i;
+            //qDebug()<<"factorization.cpp:Modular Sqrt: result 0"<<i;
+            break;
+        }
+    }
+    if(mod==2)
+    {
+        result[0]=i;
+        return result;
+    }
+    ++i;
+    while(i<mod)
+    {
+        i_2=i^2;
+        if(i_2<N_j)
+        {
+            ++i;
+        }
+        while(i_2>N_j)
+        {
+            N_j+=mod;
+        }
+        if(i_2==N_j)
+        {
+            result[1]=i;
+            //qDebug()<<"factorization.cpp:Modular Sqrt: result 1"<<i;
+            break;
+        }
+    }
+    return result;
+
+}
+
 //========================================================class=Point================================================
 LongInt Point::_mod=-LongInt(0);
 LongInt Point::_a=0;

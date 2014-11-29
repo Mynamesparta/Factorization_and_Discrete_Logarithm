@@ -55,7 +55,7 @@ QString ListofAlgorithm::run_discrete_logarithm(QString first, QString second, Q
 
 QString ListofAlgorithm::getListofAlgorithm()
 {
-    return "Fermat fPollard Lenstra Primitive Shank dPollard World_of_Test";
+    return "Fermat fPollard Lenstra Square Primitive Shank dPollard World_of_Test";
 }
 
 int ListofAlgorithm::set(QString name )
@@ -77,6 +77,12 @@ int ListofAlgorithm::set(QString name )
     {
         current_algorithm_factorization=&Factorization::Lenstra;
         qDebug()<<"listofalgorithm.h:current algorithm \"Lenstra\"";
+        return 1;
+    }
+    if(name=="Square")
+    {
+        current_algorithm_factorization=&Factorization::Square;
+        qDebug()<<"listofalgorithm.h:current algorithm \"Square\"";
         return 1;
     }
     if(name=="World_of_Test")
