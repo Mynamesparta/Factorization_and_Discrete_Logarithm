@@ -85,6 +85,14 @@ int ListofAlgorithm::set(QString name )
         qDebug()<<"listofalgorithm.h:current algorithm \"Square\"";
         return 1;
     }
+    /*/
+    if(name=="Generator")
+    {
+        current_algorithm_factorization=&Factorization::Generator;
+        qDebug()<<"listofalgorithm.h:current algorithm \"Generator\"";
+        return 1;
+    }
+    /*/
     if(name=="World_of_Test")
     {
         current_algorithm_factorization=&Factorization::World_of_Test;

@@ -1,5 +1,5 @@
 #include "factorization.h"
-#define qF QString("factorization.h:")
+#define qF QString("factorization.cpp:")
 Factorization::Factorization()
 {
 
@@ -274,19 +274,58 @@ QVector<LongInt> Factorization::Lenstra(LongInt n)
     return result;
 }
 
-LongInt Factorization::Generator(LongInt g)
+LongInt Factorization::Generator(LongInt n)
 {
-    LongInt result,rand;
-    QVector<LongInt> factorizicion=Factorization::Lenstra(g-1);
-    QVector<LongInt>::iterator iter;
+    LongInt rand,totient=Algorithm::Eulers_totient(n);
+    QVector<LongInt> factorization=Factorization::Lenstra(totient);
+    qDebug()<<qF<<"factorization="<<factorization;
+    QVector<LongInt>::const_iterator iter;
     while(1)
     {
-        rand=Random(2,g-1);
-        for(iter=factorizicion.begin();iter<factorizicion.end();iter++)
+        rand=Random(2,n-1);
+        //
+        static int Debug=0;
+        switch(Debug)
         {
-            //result=Modular_exponentiation(rand,g,)
+        case 0:
+            rand=64;
+            Debug++;
+            break;
+        case 1:
+            rand=8;
+            Debug++;
+            break;
+        case 2:
+            rand=99;
+            Debug++;
+            break;
+        case 3:
+            rand=76;
+            Debug++;
+            break;
+        case 4:
+            rand=70;
+            Debug++;
+            break;
+        }
+        //
+        iter=factorization.constBegin();
+        while(1)
+        {
+            qDebug()<<qF<<rand<<Modular_exponentiation(rand,n,totient/(*iter));
+            if(Modular_exponentiation(rand,n,totient/(*iter))==1)
+            {
+                break;
+            }
+            iter++;
+            if(iter==factorization.constEnd())
+            {
+                goto _break;
+            }
         }
     };
+    _break:;
+    return rand;
 }
 
 QVector<LongInt> Factorization::Square(LongInt N)
