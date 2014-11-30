@@ -337,7 +337,7 @@ LongInt DiscreteLogarithm::Pohlig_Hellman(LongInt g,LongInt b,LongInt n)
     //=====================initialization
     QVector<LongInt> Base;
     QVector<int> Exponentiation;
-    int i,j,maxIndex=0;
+    int i,j,k,maxIndex=0;
     const LongInt _n=Algorithm::Eulers_totient(n);
     Base=Factorization::Pollard(_n);
     LongInt d=Base.first();
@@ -371,12 +371,14 @@ LongInt DiscreteLogarithm::Pohlig_Hellman(LongInt g,LongInt b,LongInt n)
     qDebug()<<qD<<"Exponentiation="<<Exponentiation;
     qDebug()<<qD<<"maxIndex="<<maxIndex;
     LongInt _c[Base.length()],c[Base.length()];
+    LongInt x[maxIndex];
     QVector<QVector<LongInt>> Table(Base.length());
     for(i=0;i<Table.length();i++)
     {
         d=_n/Base[i];
         for(j=0;Base[i]>j;j++)
         {
+            qDebug()<<g<<d*j;
             Table[i]<<Modular_exponentiation(g,n,d*j);
         }
     }
@@ -385,5 +387,67 @@ LongInt DiscreteLogarithm::Pohlig_Hellman(LongInt g,LongInt b,LongInt n)
         qDebug()<<qD<<Table[i];
     }
     //===================================
-    return n;
+    for(i=0;i<Base.length();i++)
+    {
+        static LongInt x_k,q_k;
+        q_k=1;
+        for(j=0;j<Exponentiation[i];j++)
+        {
+            d=0;
+            x_k=1;
+            for(k=0;k<j;k++)
+            {
+                d+=x[k]*x_k;
+                //qDebug()<<qD<<j<<d<<x[k]<<"*"<<x_k;
+                x_k*=Base[i];
+            }
+            x_k=(Base[i]^(j+1));
+            qDebug()<<qD<<Modular_exponentiation(b,n,_n/x_k)<<Modular_Multiplicative_Inverse(Modular_exponentiation(g^d,n,_n/x_k),n);
+            d=(Modular_exponentiation(b,n,_n/x_k)*
+                    Modular_Multiplicative_Inverse(Modular_exponentiation(g^d,n,_n/x_k),n))%n;
+            //qDebug()<<qD<<d;
+            for(k=0;k<Table[i].length();k++)
+            {
+                if(d==Table[i][k])
+                {
+                    x[j]=k;
+                }
+            }
+            qDebug()<<qD<<x[j]<<"*"<<q_k<<"mod"<<(Base[i]^Exponentiation[i]);
+            _c[i]+=(x[j]*q_k);
+            _c[i]=_c[i]%(Base[i]^Exponentiation[i]);
+            //qDebug()<<qD<<"_c["<<i<<"] = "<<_c[i];
+            q_k*=Base[i];
+        }
+        qDebug()<<qD<<"_c["<<i<<"] = "<<_c[i];
+    }
+    LongInt a,part;
+    for(i=0;i<Base.length();++i)
+    {
+        Base[i]=Base[i]^Exponentiation[i];
+    }
+    //=============Гаусc=============
+    for (i=0; i<Base.length(); ++i)
+    {
+        c[i] = _c[i];
+        for (j=0; j<i; ++j) {
+            c[i] = (c[i] - c[j]) * Modular_Multiplicative_Inverse(Base[j],Base[i]);
+            part=c[i];
+            c[i] = c[i] % Base[i];
+            if (c[i] < 0)  c[i] += Base[i];
+            //qDebug()<<"II:"<<c[i]<<Modular_Multiplicative_Inverse(prime_numbers[j],prime_numbers[i]);
+        }
+        //qDebug()<<"II:"<<c[i]<<prime_numbers[i];
+    }
+    a=c[0];
+    d=1;
+    //qDebug()<<b<<c[0]<<a;
+    for(i=1;i<Base.length();i++)
+    {
+        d*=Base[i-1];
+        a+=d*c[i];
+        //qDebug()<<d<<c[i]<<a;
+    }
+    //==============================
+    return a;
 }
