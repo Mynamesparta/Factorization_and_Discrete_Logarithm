@@ -146,13 +146,13 @@ public:
 
      static int Modular_Multiplicative_Inverse(int,int);
      static LongInt Modular_Multiplicative_Inverse(LongInt, LongInt, bool* search_bag=NULL);
-     static LongInt Modular_exponentiation(LongInt a,LongInt m, LongInt r);
      static LongInt  HelloWorldofTest(LongInt, LongInt );
 
 protected:
      static LongInt Random(LongInt,LongInt);
      static void FFT(QVector< std::complex<double> >&,bool);
      static LongInt HCD(LongInt,LongInt);
+     static LongInt Modular_exponentiation(LongInt a,LongInt m, LongInt r);
      static LongInt Eulers_totient(LongInt );
      struct Table
      {

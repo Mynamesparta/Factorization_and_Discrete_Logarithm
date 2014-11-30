@@ -48,6 +48,7 @@ LongInt::LongInt(QString qs_number):minus(0)
             }
         }
     }
+    normalization();
 }
 
 LongInt::LongInt(int num)//:minus(0)
@@ -171,6 +172,7 @@ LongInt LongInt::mod(const LongInt &a, const LongInt &b)
         //qDebug()<<"longint.cpp:result_long_int="<<result_long_int;
     }
     part.minus=_minus;
+    part.normalization();
     return part;
 }
 
@@ -242,6 +244,11 @@ void LongInt::normalization()
         number<<0;
         minus=0;
         return ;
+    }
+    if(number.length()==1&&number.first()==0)
+    {
+        minus=0;
+        return;
     }
     while(number.length()>0)
     {
@@ -485,11 +492,11 @@ LongInt LongInt::operator +(LongInt b)const//a=this;
     //qDebug()<<"test:"<<*this<<b;
     if(number.isEmpty()||number.first()==0)
     {
-        return b;
+        return ((+b)==0?LongInt():b);
     }
     if(b.number.isEmpty()||b.number.first()==0)
     {
-        return *this;
+        return ((+(*this))==0?LongInt():*this);
     }
     LongInt a,c;
     //qDebug()<<*this<<b;
@@ -881,6 +888,8 @@ bool  LongInt::operator ==(LongInt b)const
     }
 
     LongInt a=*this;
+    a.normalization();
+    b.normalization();
     //--------------------
     if( (a.length()<b.length()) || (a.length()>b.length()) )
     {
@@ -1250,12 +1259,12 @@ LongInt LongInt::operator *(const LongInt &b) const//a=this;
     if(b.number.isEmpty()||b.number.first()==0)
     {
         //result_long_int.push_front(0);
-        return LongInt(0);
+        return LongInt();
     }
     if(this->number.isEmpty()||this->number.first()==0)
     {
         //result_long_int.push_front(0);
-        return LongInt(0);
+        return LongInt();
     }
     LongInt c;
     int k=0;

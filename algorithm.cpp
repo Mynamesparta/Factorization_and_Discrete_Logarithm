@@ -974,7 +974,7 @@ LongInt Algorithm::Random(LongInt inf,LongInt sup)// random є [inf;sup]
     _a<<=10;
     //_a/=LongInt(RAND_MAX+1);
     _a=( _a % (sup-inf+1))+inf;
-    qDebug()<<inf<<"<="<<_a<<"<="<<sup;
+    //qDebug()<<inf<<"<="<<_a<<"<="<<sup;
     return _a;
 }
 

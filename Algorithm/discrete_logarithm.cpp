@@ -1,4 +1,5 @@
 #include "discrete_logarithm.h"
+#define qD QString("discrete_logarithm.cpp:")
 DiscreteLogarithm::DiscreteLogarithm()
 {
 }
@@ -169,3 +170,244 @@ void DiscreteLogarithm::new_iter(LongInt &u, LongInt &v, LongInt& z,const LongIn
 
 //================================Pollard============================
 
+
+LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
+{
+    QVector<LongInt> Base;
+    QVector<LongInt>::const_iterator iter;
+    static const int C=100;
+    LongInt d=1,i=2,rand;
+    LongInt inverse;
+    const LongInt _n=(Agrawal_Kayal_Saxena(n)?n-1:Algorithm::Eulers_totient(n));
+    qDebug()<<qD<<"Eulers totient="<<_n;
+
+    int j,k;
+    while(d<n)
+    {
+        if(Agrawal_Kayal_Saxena(i))
+        {
+            Base<<i;
+            d*=i;
+        }
+        ++i;
+    }
+    qDebug()<<qD+"Base-"<<Base;
+    QVector<QVector<LongInt>> matrix(C+Base.length(),QVector<LongInt>(Base.length()+1));
+    QVector<LongInt> result(Base.length()+1);
+    i=0;
+    while(i.toInt()<matrix.length())
+    {
+        rand=Random(0,n-1);
+        /*/
+        static int test=0;
+        switch(test)
+        {
+        case 0:
+            rand =2;
+            test++;
+            break;
+        case 1:
+            rand =15;
+            test++;
+            break;
+        case 2:
+            rand =11;
+            test++;
+            break;
+        }
+        /*/
+        d=Modular_exponentiation(g,n,rand);
+        if(d==1)
+            continue;
+        for(iter=Base.constBegin(),j=0;iter<Base.constEnd();iter++)
+        {
+            //qDebug()<<qD<<d<<d%(*iter);
+            while(d%(*iter)==0)
+            {
+                d/=(*iter);
+                //qDebug()<<qD<<i<<j;
+                matrix[i.toInt()][j]+=1;
+            }
+            j++;
+        }
+        if(d==1)
+        {
+            matrix[i.toInt()][Base.length()]=rand;
+            ++i;
+        }
+    }
+    /*/
+    for(i=0;i<matrix.length();++i)
+    {
+        qDebug()<<qD<<matrix[i.toInt()];
+    }
+    qDebug()<<"----------------";
+    /*/
+    for(j=0;j<Base.length();++j)//стовбчик
+        for(i=j;i<matrix.length();++i)//рядочок
+        {
+            if(matrix[i.toInt()][j]!=0)
+            {
+                if(i!=j)
+                {
+                    matrix.insert(j,matrix.takeAt(i.toInt()));//пересуваєм на потрібне місце
+                    /*/
+                    for(int _i=0;_i<matrix.length();++_i)
+                    {
+                        qDebug()<<qD<<matrix[_i];
+                    }
+                    qDebug()<<"----------------";
+                    /*/
+                }
+                //------------зведення-(j,j)-елемента-до-1-------------------------
+                d=matrix[j][j];
+                if(d!=1)
+                {
+                    inverse=Modular_Multiplicative_Inverse(matrix[j][j],n);
+                    //qDebug()<<qD+"inverse-"<<d<<inverse;
+                    for(i=j;i<=Base.length();++i)
+                    {
+                        //qDebug()<<qD<<"( "<<j<<" ) ,"<<i<<"-"<<inverse<<
+                        (matrix[j][i.toInt()]=(matrix[j][i.toInt()]*inverse)%(n));
+                    }
+                    /*/
+                    for(int _i=0;_i<matrix.length();++_i)
+                    {
+                        qDebug()<<qD<<matrix[_i];
+                    }
+                    qDebug()<<"----------------";
+                    /*/
+                }
+                //-------------------------------------
+                for(i=0;i<matrix.length();++i)
+                {
+                    if(i!=j)
+                    {
+                        if(matrix[i.toInt()][j]!=0)
+                        {
+                            d=matrix[i.toInt()][j];
+                            for(k=j;k<=Base.length();++k)
+                            {
+                                //qDebug()<<qD<<i<<", ( "<<k<<" ) -"<<matrix[i.toInt()][k]<<d*matrix[j][k]<<
+                                (matrix[i.toInt()][k]=(matrix[i.toInt()][k]-d*matrix[j][k])%_n);
+                                (matrix[i.toInt()][k]=((matrix[i.toInt()][k]+1<LongInt(1))?matrix[i.toInt()][k]+_n:matrix[i.toInt()][k]));
+                            }
+                            /*/
+                            for(int _i=0;_i<matrix.length();++_i)
+                            {
+                                qDebug()<<qD<<matrix[_i];
+                            }
+                            qDebug()<<"----------------";
+                            /*/
+                        }
+                    }
+                }
+                break;
+            }
+            /*/
+            else
+            {
+                if(i==matrix.length()-1)
+                {
+                    qDebug()<<qD<<i<<j;
+                    i=j;
+                    int _j=0;
+                    while(i<matrix.length())
+                    {
+                        rand=Random(0,n-1);
+                        d=Modular_exponentiation(g,n,rand);
+                        if(d==1)
+                            continue;
+                        for(iter=Base.constBegin(),_j=0;iter<Base.constEnd();iter++)
+                        {
+                            //qDebug()<<qD<<d<<d%(*iter);
+                            static bool isEmpty=false;
+                            if(isEmpty)
+                            {
+                                for(k=0;k<Base.length();k++)
+                                {
+                                    matrix[i.toInt()][k]=0;
+                                }
+                                isEmpty=1;
+                            }
+                            while(d%(*iter)==0)
+                            {
+                                d/=*iter;
+                                matrix[i.toInt()][_j]+=1;
+                            }
+                            _j++;
+                            isEmpty=1;
+                        }
+                        if(d==1)
+                        {
+                            matrix[i.toInt()][Base.length()]=rand;
+                            ++i;
+                        }
+                    }
+                    i=j;
+                }
+            }
+                /*/
+        };
+    /*/
+    for(i=0;i<matrix.length();++i)
+    {
+        qDebug()<<qD<<matrix[i.toInt()];
+    }
+    /*/
+    while(1)
+    {
+        rand=Random(0,n-1);
+        /*/
+        static int test=0;
+        switch(test)
+        {
+        case 0:
+            rand =3;
+            test++;
+            break;
+        case 1:
+            rand =7;
+            test++;
+            break;
+        case 2:
+            rand =11;
+            test++;
+            break;
+        }
+        /*/
+        d=(b*Modular_exponentiation(g,n,rand))%n;
+        if(d==1)
+        {
+            continue;
+        }
+        for(iter=Base.constBegin(),j=0;iter<Base.constEnd();iter++)
+        {
+            //qDebug()<<qD<<d<<d%(*iter);
+            while(d%(*iter)==0)
+            {
+                d/=(*iter);
+                //qDebug()<<qD<<i<<j;
+                result[j]+=1;
+            }
+            j++;
+        }
+        if(d==1)
+        {
+            result[Base.length()]=rand;
+            break;
+        }
+    }
+    qDebug()<<qD+"result-"<<result;
+    d=0;
+    for(j=0;j<Base.length();++j)
+    {
+        if(result[j]!=0)
+        {
+            d+=matrix[j][Base.length()]*result[j];
+        }
+    }
+    d-=result[Base.length()];
+    d=(d+1<LongInt(1)?d+_n:d);
+    return d;
+}
