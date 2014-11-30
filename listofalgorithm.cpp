@@ -55,7 +55,7 @@ QString ListofAlgorithm::run_discrete_logarithm(QString first, QString second, Q
 
 QString ListofAlgorithm::getListofAlgorithm()
 {
-    return "Fermat fPollard Lenstra Square Primitive Shank dPollard Index World_of_Test";
+    return "Fermat fPollard Lenstra Square Primitive Shank dPollard Index Pohlig_Hellman World_of_Test";
 }
 
 int ListofAlgorithm::set(QString name )
@@ -121,6 +121,12 @@ int ListofAlgorithm::set(QString name )
     {
         current_algorithm_logarithm=&DiscreteLogarithm::Index;
         qDebug()<<"listofalgorithm.h:current algorithm \"Index\"";
+        return 3;
+    }
+    if(name=="Pohlig_Hellman")
+    {
+        current_algorithm_logarithm=&DiscreteLogarithm::Pohlig_Hellman;
+        qDebug()<<"listofalgorithm.h:current algorithm \"Pohlig_Hellman\"";
         return 3;
     }
     name_of_current_algorithm="";

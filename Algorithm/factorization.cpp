@@ -79,7 +79,13 @@ QVector<LongInt> Factorization::Pollard(LongInt n)
     {
         n/=2;
         result<<2;
-        qDebug()<<"( 2 )";
+        //qDebug()<<"( 2 )";
+    }
+    while(n%3==0)
+    {
+        n/=3;
+        result<<3;
+        //qDebug()<<qF+"( 3 )";
     }
     //
     if(n==1)
@@ -114,18 +120,24 @@ QVector<LongInt> Factorization::Pollard(LongInt n)
                 c=1;
                 if(Agrawal_Kayal_Saxena(hcd))
                 {
-                    result<<hcd;
-                    qDebug()<<hcd;
+                    while(n%hcd==0)
+                    {
+                        result<<hcd;
+                        //qDebug()<<hcd;
+                        n/=hcd;
+                    }
                 }
                 else
                 {
                     _result<<hcd;
                 }
-                n/=hcd;
+                //n/=hcd;
+                if(n==1)
+                    break;
                 if(Agrawal_Kayal_Saxena(n))
                 {
                     result<<n;
-                    qDebug()<<n;
+                    //qDebug()<<n;
                 }
                 else
                 {
@@ -137,10 +149,10 @@ QVector<LongInt> Factorization::Pollard(LongInt n)
             {
                 if(c==1)
                 {
-                    qDebug()<<"factorization.cpp:Pollard search f(x) for"<<n;
+                    //qDebug()<<"factorization.cpp:Pollard search f(x) for"<<n;
                 }
                 c+=1;//+2*(c/10);
-                qDebug()<<"factorization.cpp:Pollard c="<<c;
+                //qDebug()<<"factorization.cpp:Pollard c="<<c;
                 a=2;
                 b=2;
                 i=1;
@@ -283,7 +295,7 @@ LongInt Factorization::Generator(LongInt n)
     while(1)
     {
         rand=Random(2,n-1);
-        //
+        /*/
         static int Debug=0;
         switch(Debug)
         {
@@ -308,11 +320,11 @@ LongInt Factorization::Generator(LongInt n)
             Debug++;
             break;
         }
-        //
+        /*/
         iter=factorization.constBegin();
         while(1)
         {
-            qDebug()<<qF<<rand<<Modular_exponentiation(rand,n,totient/(*iter));
+            //qDebug()<<qF<<rand<<Modular_exponentiation(rand,n,totient/(*iter));
             if(Modular_exponentiation(rand,n,totient/(*iter))==1)
             {
                 break;
@@ -389,8 +401,8 @@ QVector<LongInt> Factorization::Square(LongInt N)
         }
         sqrt_N=LongInt::Sqrt_n(N-1,2)+1;
         //qDebug()<<N;
-        qDebug()<<"factorization.cpp:Square Base-"<<Base;
-        qDebug()<<"factorization.cpp:Sqrt(N)="<<sqrt_N;
+        //qDebug()<<"factorization.cpp:Square Base-"<<Base;
+        //qDebug()<<"factorization.cpp:Sqrt(N)="<<sqrt_N;
         for(i=0;i<100;++i)
         {
             V_x_base<<(((sqrt_N+i)^2)-N);
@@ -405,7 +417,7 @@ QVector<LongInt> Factorization::Square(LongInt N)
         iter++;
         for(;iter<Base.constEnd();iter++)
         {
-            qDebug()<<"factorization.cpp:current base:"<< *iter;
+            //qDebug()<<"factorization.cpp:current base:"<< *iter;
             modular_sqrt=Modular_Sqrt(N,*iter);
             i=(modular_sqrt[0]-sqrt_N)%(*iter);
             i.normalization();
@@ -456,11 +468,13 @@ QVector<LongInt> Factorization::Square(LongInt N)
             }
         }
         bool S[S_x.length()];
+        /*/
         for(j=0;j<matrix.length();++j)
         {
             qDebug()<<matrix[j];
         }
         qDebug()<<"----------------------------";
+        /*/
         //==============знаходження=матриці=S============
         for(j=0;j<S_x.length();++j)//стовбчик
             for(i=j;i<matrix.length();++i)//рядочок
@@ -484,14 +498,16 @@ QVector<LongInt> Factorization::Square(LongInt N)
                     break;
                 }
             };
+        /*/
         for(j=0;j<matrix.length();++j)
         {
             qDebug()<<matrix[j];
         }
+        /*/
         for(i=0;i<Base.length()-1;++i)
         {
             S[i.toInt()]=matrix[i.toInt()][S_x.length()-1];
-            qDebug()<<"S:"<<S[i.toInt()];
+            //qDebug()<<"S:"<<S[i.toInt()];
         }
         if(!S_x.isEmpty())
             S[S_x.length()-1]=1;
@@ -518,7 +534,7 @@ QVector<LongInt> Factorization::Square(LongInt N)
             d=modular_sqrt[0];
         delete modular_sqrt;
         delete (modular_sqrt+1);
-        qDebug()<<p<<d<<N;
+        //qDebug()<<p<<d<<N;
         i=HCD(+(p-d),N);
         if(Algorithm::Agrawal_Kayal_Saxena( i))
         {
@@ -530,7 +546,7 @@ QVector<LongInt> Factorization::Square(LongInt N)
         }
         //qDebug()<<result<<factorization;
         i=N/i;
-        qDebug()<<"factorization.cpp: HCD"<<i;
+        //qDebug()<<"factorization.cpp: HCD"<<i;
         if(Algorithm::Agrawal_Kayal_Saxena(i))
         {
             result<<i;
@@ -540,7 +556,7 @@ QVector<LongInt> Factorization::Square(LongInt N)
             factorization<<i;
         }
         //===============================================
-        qDebug()<<result<<factorization;
+        //qDebug()<<result<<factorization;
         //return result;
     }//while(!factorization.isEmpty)
     return result;

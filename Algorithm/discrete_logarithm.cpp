@@ -1,4 +1,5 @@
 #include "discrete_logarithm.h"
+#include "factorization.h"
 #define qD QString("discrete_logarithm.cpp:")
 DiscreteLogarithm::DiscreteLogarithm()
 {
@@ -175,10 +176,10 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
 {
     QVector<LongInt> Base;
     QVector<LongInt>::const_iterator iter;
-    static const int C=100;
+    static const int C=5;
     LongInt d=1,i=2,rand;
     LongInt inverse;
-    const LongInt _n=(Agrawal_Kayal_Saxena(n)?n-1:Algorithm::Eulers_totient(n));
+    const LongInt _n=(Agrawal_Kayal_Saxena(n)?n:Algorithm::Eulers_totient(n));
     qDebug()<<qD<<"Eulers totient="<<_n;
 
     int j,k;
@@ -198,24 +199,6 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
     while(i.toInt()<matrix.length())
     {
         rand=Random(0,n-1);
-        /*/
-        static int test=0;
-        switch(test)
-        {
-        case 0:
-            rand =2;
-            test++;
-            break;
-        case 1:
-            rand =15;
-            test++;
-            break;
-        case 2:
-            rand =11;
-            test++;
-            break;
-        }
-        /*/
         d=Modular_exponentiation(g,n,rand);
         if(d==1)
             continue;
@@ -236,13 +219,13 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
             ++i;
         }
     }
-    /*/
+    //
     for(i=0;i<matrix.length();++i)
     {
         qDebug()<<qD<<matrix[i.toInt()];
     }
     qDebug()<<"----------------";
-    /*/
+    //
     for(j=0;j<Base.length();++j)//стовбчик
         for(i=j;i<matrix.length();++i)//рядочок
         {
@@ -251,13 +234,13 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
                 if(i!=j)
                 {
                     matrix.insert(j,matrix.takeAt(i.toInt()));//пересуваєм на потрібне місце
-                    /*/
+                    //
                     for(int _i=0;_i<matrix.length();++_i)
                     {
                         qDebug()<<qD<<matrix[_i];
                     }
                     qDebug()<<"----------------";
-                    /*/
+                    //
                 }
                 //------------зведення-(j,j)-елемента-до-1-------------------------
                 d=matrix[j][j];
@@ -270,13 +253,13 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
                         //qDebug()<<qD<<"( "<<j<<" ) ,"<<i<<"-"<<inverse<<
                         (matrix[j][i.toInt()]=(matrix[j][i.toInt()]*inverse)%(n));
                     }
-                    /*/
+                    //
                     for(int _i=0;_i<matrix.length();++_i)
                     {
                         qDebug()<<qD<<matrix[_i];
                     }
                     qDebug()<<"----------------";
-                    /*/
+                    //
                 }
                 //-------------------------------------
                 for(i=0;i<matrix.length();++i)
@@ -292,62 +275,18 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
                                 (matrix[i.toInt()][k]=(matrix[i.toInt()][k]-d*matrix[j][k])%_n);
                                 (matrix[i.toInt()][k]=((matrix[i.toInt()][k]+1<LongInt(1))?matrix[i.toInt()][k]+_n:matrix[i.toInt()][k]));
                             }
-                            /*/
+                            //
                             for(int _i=0;_i<matrix.length();++_i)
                             {
                                 qDebug()<<qD<<matrix[_i];
                             }
                             qDebug()<<"----------------";
-                            /*/
+                            //
                         }
                     }
                 }
                 break;
             }
-            /*/
-            else
-            {
-                if(i==matrix.length()-1)
-                {
-                    qDebug()<<qD<<i<<j;
-                    i=j;
-                    int _j=0;
-                    while(i<matrix.length())
-                    {
-                        rand=Random(0,n-1);
-                        d=Modular_exponentiation(g,n,rand);
-                        if(d==1)
-                            continue;
-                        for(iter=Base.constBegin(),_j=0;iter<Base.constEnd();iter++)
-                        {
-                            //qDebug()<<qD<<d<<d%(*iter);
-                            static bool isEmpty=false;
-                            if(isEmpty)
-                            {
-                                for(k=0;k<Base.length();k++)
-                                {
-                                    matrix[i.toInt()][k]=0;
-                                }
-                                isEmpty=1;
-                            }
-                            while(d%(*iter)==0)
-                            {
-                                d/=*iter;
-                                matrix[i.toInt()][_j]+=1;
-                            }
-                            _j++;
-                            isEmpty=1;
-                        }
-                        if(d==1)
-                        {
-                            matrix[i.toInt()][Base.length()]=rand;
-                            ++i;
-                        }
-                    }
-                    i=j;
-                }
-            }
-                /*/
         };
     /*/
     for(i=0;i<matrix.length();++i)
@@ -358,25 +297,8 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
     while(1)
     {
         rand=Random(0,n-1);
-        /*/
-        static int test=0;
-        switch(test)
-        {
-        case 0:
-            rand =3;
-            test++;
-            break;
-        case 1:
-            rand =7;
-            test++;
-            break;
-        case 2:
-            rand =11;
-            test++;
-            break;
-        }
-        /*/
         d=(b*Modular_exponentiation(g,n,rand))%n;
+        qDebug()<<qD<<d;
         if(d==1)
         {
             continue;
@@ -402,12 +324,66 @@ LongInt DiscreteLogarithm::Index(LongInt g,LongInt b,LongInt n)
     d=0;
     for(j=0;j<Base.length();++j)
     {
-        if(result[j]!=0)
-        {
             d+=matrix[j][Base.length()]*result[j];
-        }
+
     }
     d-=result[Base.length()];
-    d=(d+1<LongInt(1)?d+_n:d);
+    d=(d+1<LongInt(1)?d+n-1:d);
     return d;
+}
+
+LongInt DiscreteLogarithm::Pohlig_Hellman(LongInt g,LongInt b,LongInt n)
+{
+    //=====================initialization
+    QVector<LongInt> Base;
+    QVector<int> Exponentiation;
+    int i,j,maxIndex=0;
+    const LongInt _n=Algorithm::Eulers_totient(n);
+    Base=Factorization::Pollard(_n);
+    LongInt d=Base.first();
+    i=1;j=1;
+    while(i<Base.length())
+    {
+        if(Base[i]==d)
+        {
+            Base.remove(i);
+            j++;
+            continue;
+        }
+        else
+        {
+            d=Base[i];
+            Exponentiation<<j;
+            if(maxIndex<j)
+            {
+                maxIndex=j;
+            }
+            j=1;
+            i++;
+        }
+    }
+    Exponentiation<<j;
+    if(maxIndex<j)
+    {
+        maxIndex=j;
+    }
+    qDebug()<<qD<<"Base="<<Base;
+    qDebug()<<qD<<"Exponentiation="<<Exponentiation;
+    qDebug()<<qD<<"maxIndex="<<maxIndex;
+    LongInt _c[Base.length()],c[Base.length()];
+    QVector<QVector<LongInt>> Table(Base.length());
+    for(i=0;i<Table.length();i++)
+    {
+        d=_n/Base[i];
+        for(j=0;Base[i]>j;j++)
+        {
+            Table[i]<<Modular_exponentiation(g,n,d*j);
+        }
+    }
+    for(i=0;i<Table.length();++i)
+    {
+        qDebug()<<qD<<Table[i];
+    }
+    //===================================
+    return n;
 }

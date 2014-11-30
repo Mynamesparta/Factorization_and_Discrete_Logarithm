@@ -385,7 +385,7 @@ LongInt Algorithm::Schonhage(LongInt a, LongInt b)
         _c[i]=((a % prime_long_int) * (b % prime_long_int) % prime_long_int).toInt();         //c[i]=a*b mod prime_number[i]
         //qDebug()<<*iter<<_c[i];
     }
-
+    //=============Гаусc=============
     for (i=0; i<prime_numbers.length(); ++i)
     {
         c[i] = _c[i];
@@ -407,6 +407,7 @@ LongInt Algorithm::Schonhage(LongInt a, LongInt b)
         a+=b*c[i];
         qDebug()<<b<<c[i]<<a;
     }
+    //==============================
     return a;
 }
 
