@@ -1,6 +1,6 @@
 #include "algorithm.h"
 //#include "LongNumber/longint.h"
-#define qD "algorithm.cpp"
+#define qA "algorithm.cpp"
 LongInt Algorithm::Karatsuba(LongInt a_1, LongInt b_1)
 {
     if(a_1.length()==1 || b_1.length()==1)//&&
@@ -52,7 +52,7 @@ LongInt Algorithm::Toom_Cook(LongInt a, LongInt b)
 
     int last_q=4;
 
-    qDebug()<<qD<<"\"(0)\""<<Q<<R<<table.q<<table.r;
+    qDebug()<<qA<<"\"(0)\""<<Q<<R<<table.q<<table.r;
     while(a.length()>(qv_table.last().q+last_q))
     {
         qDebug()<<"algorithm.cpp:"<<"("+QString::number(k)+")"<<Q<<R<<table.q<<table.r;
@@ -451,9 +451,14 @@ int Algorithm::Modular_Multiplicative_Inverse(int a,int mod)
     }
     return an_1;
 }
-LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* search_bag)
+LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* is_inverse_norm)
 {
     //qDebug()<<"algorithm.cpp: Inverse-"<<a<<mod;
+    if(a==0)
+    {
+        qDebug()<<qA<<"Inverse a==0";
+        return a;
+    }
     if(a<LongInt(0))
     {
         a+=mod;
@@ -488,10 +493,9 @@ LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* 
     {
         qDebug()<<"algorithm.cpp:Modular_Multiplicative_Inverse: HCD(a,mod)="<<a;
         qDebug()<<"Inverse number for a does not exist";
-        if(search_bag!=NULL)
+        if(is_inverse_norm!=NULL)
         {
-            delete search_bag;
-            search_bag=new bool(false);
+            (*is_inverse_norm)=false;
         }
         return a;
     }
@@ -501,10 +505,9 @@ LongInt Algorithm::Modular_Multiplicative_Inverse(LongInt a, LongInt mod, bool* 
         //qDebug()<<"algorithm.cpp: inverse="<<an_1+mod;
         return mod+an_1;
     }
-    if(search_bag!=NULL)
+    if(is_inverse_norm!=NULL)
     {
-        delete search_bag;
-        search_bag=new bool(true);
+        (*is_inverse_norm)=true;
     }
     //qDebug()<<"algorithm.cpp: inverse="<<an_1;
     return an_1;
